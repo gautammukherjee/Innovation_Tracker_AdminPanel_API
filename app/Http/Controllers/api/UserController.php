@@ -43,7 +43,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name'=>'required',
             'email'=> 'required|string|email|unique:users',
-            'password'=> 'required|string|confirmed|min:6'
+            'password'=> 'required|string|min:6'
         ]);
         if($validator->fails()){
             return response()->json($validator->errors()->toJson(), 400);
@@ -69,7 +69,8 @@ class UserController extends Controller
         if($validator->fails()){
             return response()->json(['error'=> $validator->errors()]);
         }
-        if(!$token=auth()->setTTL(1)->attempt($validator->validated())){
+        
+        if(!$token=auth()->setTTL(1440)->attempt($validator->validated())){
             return response()->json(['success'=>false,'error' => 'Unauthorized']);
         }
         $login = $this->createNewToken($token);        
@@ -94,14 +95,12 @@ class UserController extends Controller
     
     //Get Users Lists section
     public function getUsersLists(){
-
-        try{
-            $user = auth()->userOrFail();
-        }
-        catch(\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e){
-            return response()->json(['error' => $e->getMessage()], 401);
-        }
-        
+        // try{
+        //     $user = auth()->userOrFail();
+        // }
+        // catch(\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e){
+        //     return response()->json(['error' => $e->getMessage()], 401);
+        // }        
         $sql = "SELECT * FROM users WHERE deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
