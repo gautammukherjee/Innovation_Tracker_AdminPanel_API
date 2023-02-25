@@ -27,7 +27,7 @@ class GeneController extends Controller
 
     //Get Genes Lists section
     public function getGenesLists(){        
-        $sql = "SELECT * FROM testing.genes WHERE deleted=0";
+        $sql = "SELECT * FROM genes WHERE deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'genesRecords' => $result
@@ -37,7 +37,7 @@ class GeneController extends Controller
 
     //Add Genes Lists section
     public function addGenes(Request $request){
-        $sql = "INSERT INTO testing.genes (name, symbol) values ('".$request->name."', '".$request->symbol."')";
+        $sql = "INSERT INTO genes (name, symbol) values ('".$request->name."', '".$request->symbol."')";
         // echo $sql;
         $result = DB::select(DB::raw($sql));
         return response()->json([
@@ -47,8 +47,8 @@ class GeneController extends Controller
 
     //Add Genes Lists section
     public function updateGenes(Request $request, $id){
-        $sql = "UPDATE testing.genes SET name = '".$request->name."', symbol ='".$request->symbol."' WHERE gene_id=".$id;
-        // echo $sql;
+
+        $sql = "UPDATE genes SET name = '".$request->name."', symbol ='".$request->symbol."' WHERE gene_id=".$id;
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'genesRecords' => $result
@@ -57,8 +57,7 @@ class GeneController extends Controller
 
     //Delete Genes Lists section
     public function deleteGenes($id){
-        $sql = "DELETE FROM testing.genes WHERE gene_id=".$id;
-        //echo $sql;
+        $sql = "UPDATE genes SET deleted=1 WHERE gene_id=".$id;
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'genesDeleted' => $result
