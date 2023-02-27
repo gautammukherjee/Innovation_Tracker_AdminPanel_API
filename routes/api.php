@@ -21,7 +21,7 @@ use App\Http\Controllers\api\MoasController;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    return $request->user->user_id();
 });
 
 Route::group(['middleware'=>'api'], function($router){
