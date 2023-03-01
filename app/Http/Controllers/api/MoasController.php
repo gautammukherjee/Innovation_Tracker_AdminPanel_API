@@ -34,12 +34,34 @@ class MoasController extends Controller
         ]);
     }
 
+	//Add MOAs Lists section
+    public function addMoas(Request $request){
+        $sql = "INSERT INTO testing.moas (name, description) values ('".$request->name."', '".$request->description."')";
+        // echo $sql;
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'moasRecords' => $result
+        ]);
+    }
 
-    //Logout section
-    // public function logout(){
-    //     auth()->logout();
-    //     return response()->json([
-    //         'message'=>'User Logged out',
-    //     ]);
-    // }
+    //Add MOAs Lists section
+    public function updateMoas(Request $request, $id){
+
+        $sql = "UPDATE testing.moas SET name = '".$request->name."', description ='".$request->description."' WHERE moa_id=".$id;
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'moasRecords' => $result
+        ]);
+    }
+
+    //Delete MOAs Lists section
+    public function deleteMoas($id){
+        $sql = "UPDATE testing.moas SET deleted=1 WHERE moa_id=".$id;
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'moasDeleted' => $result
+        ]);
+    }
+	
+    
 }
