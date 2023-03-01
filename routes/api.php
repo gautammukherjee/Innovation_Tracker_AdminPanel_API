@@ -60,13 +60,16 @@ Route::post('/addDiseases',[DiseaseController::class, 'addDiseases']);
 Route::put('/updateDiseases/{id}',[DiseaseController::class, 'updateDiseases']);
 Route::put('/deleteDiseases/{id}',[DiseaseController::class, 'deleteDiseases']);
 
-Route::get('/getMoasLists',[MoasController::class, 'getMoasLists'])->middleware('jwt.auth');
-
 //Newsletter lists, add, update and delete
 Route::get('/getNewsletterLists',[NewsletterController::class, 'getNewsletterLists'])->middleware('jwt.auth');
 Route::post('/addNewsletter',[NewsletterController::class, 'addNewsletter']);
 Route::put('/updateNewsletter/{id}',[NewsletterController::class, 'updateNewsletter']);
 Route::put('/deleteNewsletter/{id}',[NewsletterController::class, 'deleteNewsletter']);
+
+Route::get('/getMoasLists',[MoasController::class, 'getMoasLists'])->middleware('jwt.auth');
+Route::post('/addMoas',[MoasController::class, 'addMoas']);
+Route::put('/updateMoas/{id}',[MoasController::class, 'updateMoas']);
+Route::put('/deleteMoas/{id}',[MoasController::class, 'deleteMoas']);
 
 //Drugs lists, add, update and delete
 Route::get('/getDrugsLists',[DrugController::class, 'getDrugsLists'])->middleware('jwt.auth');
