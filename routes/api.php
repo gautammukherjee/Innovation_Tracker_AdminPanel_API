@@ -43,7 +43,11 @@ Route::get('/getGenesLists',[GeneController::class, 'getGenesLists'])->middlewar
 Route::get('/getDiseasesLists',[DiseaseController::class, 'getDiseasesLists'])->middleware('jwt.auth');
 Route::get('/getCompaniesLists',[CompanyController::class, 'getCompaniesLists'])->middleware('jwt.auth');
 Route::get('/getDrugsLists',[DrugController::class, 'getDrugsLists'])->middleware('jwt.auth');
+
 Route::get('/getMoasLists',[MoasController::class, 'getMoasLists'])->middleware('jwt.auth');
+Route::post('/addMoas',[MoasController::class, 'addMoas']);
+Route::put('/updateMoas/{id}',[MoasController::class, 'updateMoas']);
+Route::put('/deleteMoas/{id}',[MoasController::class, 'deleteMoas']);
 
 Route::post('/addGenes',[GeneController::class, 'addGenes']);
 Route::put('/updateGenes/{id}',[GeneController::class, 'updateGenes']);
