@@ -27,10 +27,39 @@ class DiseaseController extends Controller
 
     //Get Genes Lists section
     public function getDiseasesLists(){        
-        $sql = "SELECT * FROM diseases WHERE deleted=0";
+        $sql = "SELECT disease_id, name, description, created_at FROM testing.diseases WHERE deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'diseasesRecords' => $result
+        ]);
+    }
+
+    //Add Genes Lists section
+    public function addDiseases(Request $request){
+        $sql = "INSERT INTO testing.diseases (name, description) values ('".$request->name."', '".$request->description."')";
+        // echo $sql;
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'diseaseRecords' => $result
+        ]);
+    }
+
+    //Add Genes Lists section
+    public function updateDiseases(Request $request, $id){
+
+        $sql = "UPDATE testing.diseases SET name = '".$request->name."', description ='".$request->description."' WHERE disease_id=".$id;
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'diseaseRecords' => $result
+        ]);
+    }
+
+    //Delete Genes Lists section
+    public function deleteDiseases($id){
+        $sql = "UPDATE testing.diseases SET deleted=1 WHERE disease_id=".$id;
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'diseaseDeleted' => $result
         ]);
     }
 

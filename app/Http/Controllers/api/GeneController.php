@@ -34,7 +34,6 @@ class GeneController extends Controller
         ]);
     }
 
-
     //Add Genes Lists section
     public function addGenes(Request $request){
         $sql = "INSERT INTO testing.genes (name, symbol, description) values ('".$request->name."', '".$request->symbol."', '".$request->description."')";
@@ -47,7 +46,6 @@ class GeneController extends Controller
 
     //Add Genes Lists section
     public function updateGenes(Request $request, $id){
-
         $sql = "UPDATE testing.genes SET name = '".$request->name."', symbol ='".$request->symbol."', description ='".$request->description."' WHERE gene_id=".$id;
         $result = DB::select(DB::raw($sql));
         return response()->json([

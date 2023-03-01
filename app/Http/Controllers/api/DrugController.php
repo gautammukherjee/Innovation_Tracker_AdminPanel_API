@@ -27,19 +27,38 @@ class DrugController extends Controller
 
     //Get Genes Lists section
     public function getDrugsLists(){        
-        $sql = "SELECT * FROM drugs WHERE deleted=0";
+        $sql = "SELECT * FROM testing.drugs WHERE deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'drugsRecords' => $result
         ]);
     }
 
+    //Add Drugs Lists section
+    public function addDrugs(Request $request){
+        $sql = "INSERT INTO testing.drugs (name, description) values ('".$request->name."', '".$request->description."')";
+        // echo $sql;
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'drugsRecords' => $result
+        ]);
+    }
 
-    //Logout section
-    // public function logout(){
-    //     auth()->logout();
-    //     return response()->json([
-    //         'message'=>'User Logged out',
-    //     ]);
-    // }
+    //Add Genes Lists section
+    public function updateDrugs(Request $request, $id){
+        $sql = "UPDATE testing.drugs SET name = '".$request->name."', description ='".$request->description."' WHERE drug_id=".$id;
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'drugsRecords' => $result
+        ]);
+    }
+
+    //Delete Genes Lists section
+    public function deleteDrugs($id){
+        $sql = "UPDATE testing.drugs SET deleted=1 WHERE drug_id=".$id;
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'drugsDeleted' => $result
+        ]);
+    }
 }
