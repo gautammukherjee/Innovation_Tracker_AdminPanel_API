@@ -27,7 +27,7 @@ class DiseaseController extends Controller
 
     //Get Genes Lists section
     public function getDiseasesLists(){        
-        $sql = "SELECT disease_id, name, description, created_at FROM testing.diseases WHERE deleted=0";
+        $sql = "SELECT disease_id, name as disease_name FROM testing.diseases WHERE deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'diseasesRecords' => $result
@@ -36,8 +36,8 @@ class DiseaseController extends Controller
 
     //Add Genes Lists section
     public function addDiseases(Request $request){
-        $sql = "INSERT INTO testing.diseases (name, description) values ('".$request->name."', '".$request->description."')";
-        // echo $sql;
+        $sql = "INSERT INTO testing.diseases (name, description) values ('".pg_escape_string($request->name)."', '".pg_escape_string($request->description)."')";
+        //echo $sql;
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'diseaseRecords' => $result
@@ -46,8 +46,7 @@ class DiseaseController extends Controller
 
     //Add Genes Lists section
     public function updateDiseases(Request $request, $id){
-
-        $sql = "UPDATE testing.diseases SET name = '".$request->name."', description ='".$request->description."' WHERE disease_id=".$id;
+        $sql = "UPDATE testing.diseases SET name = '".pg_escape_string($request->name)."', description ='".pg_escape_string($request->description)."' WHERE disease_id=".$id;
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'diseaseRecords' => $result
@@ -57,6 +56,45 @@ class DiseaseController extends Controller
     //Delete Genes Lists section
     public function deleteDiseases($id){
         $sql = "UPDATE testing.diseases SET deleted=1 WHERE disease_id=".$id;
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'diseaseDeleted' => $result
+        ]);
+    }
+
+    //Disease Synonm Lists/add/edit/delete
+    
+    //Get Disease Synonm Lists section
+    public function getDiseaseSynLists(){
+        $sql = "SELECT disease_syn_id, disease_id, name, created_at FROM testing.disease_syns WHERE deleted=0";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'diseasesRecords' => $result
+        ]);
+    }
+
+    //Add Genes Lists section
+    public function addDiseaseSyn(Request $request){
+        $sql = "INSERT INTO testing.disease_syns (disease_id,name) values ('".$request->disease_id."', '".pg_escape_string($request->name)."')";
+        // echo $sql;
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'diseaseRecords' => $result
+        ]);
+    }
+
+    //Add Genes Lists section
+    public function updateDiseaseSyn(Request $request, $id){
+        $sql = "UPDATE testing.disease_syns SET disease_id='".$request->disease_id."', name = '".pg_escape_string($request->name)."' WHERE disease_syn_id=".$id;
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'diseaseRecords' => $result
+        ]);
+    }
+
+    //Delete Genes Lists section
+    public function deleteDiseaseSyn($id){
+        $sql = "UPDATE testing.disease_syns SET deleted=1 WHERE disease_syn_id=".$id;
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'diseaseDeleted' => $result

@@ -36,7 +36,7 @@ class NewsletterController extends Controller
 
     //Add Genes Lists section
     public function addNewsletter(Request $request){
-        $sql = "INSERT INTO testing.newss (user_id, publication_date, title, description, url) values (".auth()->user()->user_id.", '".$request->publication_date."', '".$request->title."','".$request->description."', '".$request->url."')";
+        $sql = "INSERT INTO testing.newss (user_id, publication_date, title, description, url) values (".auth()->user()->user_id.", '".$request->publication_date."', '".pg_escape_string($request->title)."','".pg_escape_string($request->description)."', '".pg_escape_string($request->url)."')";
         // echo $sql;
         $result = DB::select(DB::raw($sql));
         return response()->json([
@@ -46,7 +46,7 @@ class NewsletterController extends Controller
 
     //Add Genes Lists section
     public function updateNewsletter(Request $request, $id){
-        $sql = "UPDATE newss SET user_id = ".auth()->user()->user_id.", publication_date = '".$request->publication_date."', title = '".$request->title."', description ='".$request->description."', url='".$request->url."' WHERE news_id=".$id;
+        $sql = "UPDATE newss SET user_id = ".auth()->user()->user_id.", publication_date = '".$request->publication_date."', title = '".pg_escape_string($request->title)."', description ='".pg_escape_string($request->description)."', url='".pg_escape_string($request->url)."' WHERE news_id=".$id;
         //echo $sql;
         $result = DB::select(DB::raw($sql));
         return response()->json([
@@ -60,6 +60,17 @@ class NewsletterController extends Controller
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'newssDeleted' => $result
+        ]);
+    }
+
+    //////////// Frontend ////////////////
+
+    //////Get Genes Lists section
+    public function getNewsletterFrontLists(Request $request){
+        $sql = "SELECT ns.news_id, ns.user_id, ns.publication_date, ns.title, ns.description, ns.url, ns.webhose_id, ns.textindex_td, ns.created_at, c.name as user_name FROM testing.newss as ns LEFT JOIN users as c ON ns.user_id=c.user_id WHERE ns.deleted=0";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'newsletterRecords' => $result
         ]);
     }
 

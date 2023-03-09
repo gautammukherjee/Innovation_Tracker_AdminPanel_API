@@ -27,7 +27,7 @@ class MoasController extends Controller
 
     //Get Genes Lists section
     public function getMoasLists(){        
-        $sql = "SELECT * FROM moas WHERE deleted=0";
+        $sql = "SELECT moa_id, name as moa_name, description, created_at FROM moas WHERE deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'moasRecords' => $result
@@ -36,7 +36,7 @@ class MoasController extends Controller
 
 	//Add MOAs Lists section
     public function addMoas(Request $request){
-        $sql = "INSERT INTO testing.moas (name, description) values ('".$request->name."', '".$request->description."')";
+        $sql = "INSERT INTO testing.moas (name, description) values ('".pg_escape_string($request->name)."', '".pg_escape_string($request->description)."')";
         // echo $sql;
         $result = DB::select(DB::raw($sql));
         return response()->json([
@@ -47,7 +47,7 @@ class MoasController extends Controller
     //Add MOAs Lists section
     public function updateMoas(Request $request, $id){
 
-        $sql = "UPDATE testing.moas SET name = '".$request->name."', description ='".$request->description."' WHERE moa_id=".$id;
+        $sql = "UPDATE testing.moas SET name = '".pg_escape_string($request->name)."', description ='".pg_escape_string($request->description)."' WHERE moa_id=".$id;
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'moasRecords' => $result
