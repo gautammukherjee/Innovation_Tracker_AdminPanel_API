@@ -27,7 +27,7 @@ class DiseaseController extends Controller
 
     //Get Genes Lists section
     public function getDiseasesLists(){        
-        $sql = "SELECT disease_id, name as disease_name FROM testing.diseases WHERE deleted=0";
+        $sql = "select distinct d.disease_id,d.name as disease_name from news_disease_rels ndr join diseases d on ndr.disease_id=d.disease_id where ndr.deleted=0 and d.deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'diseasesRecords' => $result

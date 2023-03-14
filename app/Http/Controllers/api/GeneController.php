@@ -26,8 +26,8 @@ class GeneController extends Controller
     }
 
     //Get Genes Lists section
-    public function getGenesLists(){        
-        $sql = "SELECT gene_id, name as gene_name, symbol, description, created_at FROM testing.genes WHERE deleted=0";
+    public function getGenesLists(){
+        $sql = "select distinct g.gene_id,g.name as gene_name, symbol, description, g.created_at from news_gene_rels ngr join genes g on ngr.gene_id=g.gene_id where ngr.deleted=0 and g.deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'genesRecords' => $result

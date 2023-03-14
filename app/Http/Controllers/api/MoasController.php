@@ -27,7 +27,7 @@ class MoasController extends Controller
 
     //Get Genes Lists section
     public function getMoasLists(){        
-        $sql = "SELECT moa_id, name as moa_name, description, created_at FROM moas WHERE deleted=0";
+        $sql = "select distinct m.moa_id,m.name as moa_name from news_moa_rels nmr join moas m on nmr.moa_id=m.moa_id where nmr.deleted=0 and m.deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'moasRecords' => $result

@@ -26,8 +26,8 @@ class DrugController extends Controller
     }
 
     //Get Genes Lists section
-    public function getDrugsLists(){        
-        $sql = "SELECT drug_id, name as drug_name, description, created_at FROM testing.drugs WHERE deleted=0";
+    public function getDrugsLists(){
+        $sql = "select distinct d.drug_id,d.name as drug_name, description, d.created_at FROM news_drug_rels ndr join drugs d on ndr.drug_id=d.drug_id where ndr.deleted=0 and d.deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'drugsRecords' => $result

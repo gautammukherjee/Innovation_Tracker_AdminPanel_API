@@ -27,7 +27,7 @@ class CompanyController extends Controller
 
     //Get Genes Lists section
     public function getCompaniesTypes(){        
-        $sql = "SELECT company_type_id, name FROM company_types WHERE deleted=0";
+        $sql = "select ct.company_type_id,ct.name from company_types ct where ct.deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'companiesTypeRecords' => $result
@@ -35,8 +35,9 @@ class CompanyController extends Controller
     }
     
     //Get Genes Lists section
-    public function getCompaniesLists(){        
-        $sql = "SELECT c.company_id, c.company_type_id, c.name as company_name, c.description, c.created_at, ct.name as ct_name FROM testing.companys as c LEFT JOIN company_types as ct ON c.company_type_id=ct.company_type_id WHERE c.deleted=0";
+    public function getCompaniesLists(){
+        // $sql = "SELECT c.company_id, c.company_type_id, c.name as company_name, c.description, c.created_at, ct.name as ct_name FROM testing.companys as c LEFT JOIN company_types as ct ON c.company_type_id=ct.company_type_id WHERE c.deleted=0";
+        $sql = "select distinct c.company_id,c.name as company_name, c.description, c.created_at, ct.name as ct_name from news_company_rels ncr join companys c on ncr.company_id=c.company_id LEFT JOIN company_types as ct ON c.company_type_id=ct.company_type_id where ncr.deleted=0 and c.deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'companiesRecords' => $result
