@@ -94,4 +94,17 @@ class NewsletterController extends Controller
         ]);
     }
 
+    public function getNewsletterFrontDetails(Request $request){
+        // print($request);
+        $publishedDate = '';
+        $newsId = $request->news_id;
+
+        $sql = "SELECT ns.news_id, ns.user_id, ns.publication_date, ns.title, ns.description, ns.url, ns.created_at, c.name as user_name FROM newss as ns LEFT JOIN users as c ON ns.user_id=c.user_id WHERE ns.deleted=0 AND news_id=".$newsId;
+        // echo $sql;
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'newsletterDetails' => $result
+        ]);
+    }
+
 }

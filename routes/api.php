@@ -99,5 +99,6 @@ Route::put('/deleteDrugSyn/{id}',[DrugController::class, 'deleteDrugSyn']);
 //TA lists
 Route::get('/getTasLists',[TaController::class, 'getTasLists'])->middleware('jwt.auth');
 
-//for frontend
+//For frontend
 Route::post('/getNewsletterFrontLists',[NewsletterController::class, 'getNewsletterFrontLists'])->middleware('jwt.auth');
+Route::post('/getNewsletterFrontDetails',[NewsletterController::class, 'getNewsletterFrontDetails'])->middleware('jwt.auth');
