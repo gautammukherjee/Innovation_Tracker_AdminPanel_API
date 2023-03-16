@@ -85,9 +85,9 @@ class NewsletterController extends Controller
         else {
             $sql = $sql . " AND publication_date ='". $request->from_date."'";
         }
-        
-        // $sql = $sql . " ) select nl.*,b.ta_ids,b.ta_names,c.disease_ids,c.disease_names,d.drug_ids,d.drug_names,e.company_ids,e.company_names,f.gene_ids,f.gene_names,g.marker_ids,g.marker_names,h.moa_ids,h.moa_names from newsletter nl ";
-        $sql = $sql . " ) select nl.* from newsletter nl ";
+
+        $sql = $sql . " ) select nl.*,b.ta_ids,b.ta_names,c.disease_ids,c.disease_names,d.drug_ids,d.drug_names,e.company_ids,e.company_names,f.gene_ids,f.gene_names,g.marker_ids,g.marker_names,h.moa_ids,h.moa_names from newsletter nl ";
+        //$sql = $sql . " ) select nl.* from newsletter nl ";
 
         //2. Therapeutic area paas
         if ($request->ta_id != "") {
