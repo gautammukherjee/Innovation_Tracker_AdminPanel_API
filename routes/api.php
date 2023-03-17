@@ -102,3 +102,6 @@ Route::get('/getTasLists',[TaController::class, 'getTasLists'])->middleware('jwt
 //For frontend
 Route::post('/getNewsletterFrontLists',[NewsletterController::class, 'getNewsletterFrontLists'])->middleware('jwt.auth');
 Route::post('/getNewsletterFrontDetails',[NewsletterController::class, 'getNewsletterFrontDetails'])->middleware('jwt.auth');
+
+
+// Route::post('/getNewsletterDisease',[NewsletterController::class, 'getNewsletterDisease'])->middleware('jwt.auth');

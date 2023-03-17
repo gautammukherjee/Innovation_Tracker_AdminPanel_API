@@ -199,4 +199,15 @@ class NewsletterController extends Controller
         ]);
     }
 
+    // public function getNewsletterDisease(Request $request){
+    //     $newsId = $request->news_id;
+    //     // echo "news_id: ".$newsId;
+    //     $sql = "SELECT ndr.news_id, ndr.disease_id, d.name as disease_name FROM diseases as d LEFT JOIN news_disease_rels as ndr ON d.disease_id=ndr.disease_id WHERE ndr.deleted=0 AND ndr.news_id=".$newsId;
+    //     // echo $sql;
+    //     $result = DB::select(DB::raw($sql));
+    //     return response()->json([
+    //         'newsletterDiseaseNames' => $result
+    //     ]);
+    // }
+
 }
