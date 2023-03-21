@@ -105,3 +105,4 @@ Route::post('/getNewsletterFrontDetails',[NewsletterController::class, 'getNewsl
 
 
 // Route::post('/getNewsletterDisease',[NewsletterController::class, 'getNewsletterDisease'])->middleware('jwt.auth');
+Route::post('/getNewsletterUserName',[NewsletterController::class, 'getNewsletterUserName'])->middleware('jwt.auth');
