@@ -76,8 +76,13 @@ Route::put('/deleteDiseaseSyn/{id}',[DiseaseController::class, 'deleteDiseaseSyn
 //Newsletter lists, add, update and delete
 Route::get('/getNewsletterLists',[NewsletterController::class, 'getNewsletterLists'])->middleware('jwt.auth');
 Route::post('/addNewsletter',[NewsletterController::class, 'addNewsletter']);
-Route::put('/updateNewsletter/{id}',[NewsletterController::class, 'updateNewsletter']);
-Route::put('/deleteNewsletter/{id}',[NewsletterController::class, 'deleteNewsletter']);
+// Route::put('/updateNewsletter/{id}',[NewsletterController::class, 'updateNewsletter']);
+// Route::put('/trashNewsletter/{id}',[NewsletterController::class, 'trashNewsletter']);
+Route::delete('/deleteNewsletter/{id}',[NewsletterController::class, 'deleteNewsletter']);
+Route::post('/approveNewsletter',[NewsletterController::class, 'approveNewsletter']);
+Route::post('/disapproveNewsletter',[NewsletterController::class, 'disapproveNewsletter']);
+Route::post('/getCommentsNewsletter/{id}',[NewsletterController::class, 'getCommentsNewsletter']);
+Route::post('/pendingNewsletter/{id}',[NewsletterController::class, 'pendingNewsletter']);
 
 Route::get('/getMoasLists',[MoasController::class, 'getMoasLists'])->middleware('jwt.auth');
 Route::post('/addMoas',[MoasController::class, 'addMoas']);
@@ -106,3 +111,9 @@ Route::post('/getNewsletterFrontDetails',[NewsletterController::class, 'getNewsl
 
 // Route::post('/getNewsletterDisease',[NewsletterController::class, 'getNewsletterDisease'])->middleware('jwt.auth');
 Route::post('/getNewsletterUserName',[NewsletterController::class, 'getNewsletterUserName'])->middleware('jwt.auth');
+
+//Approved Newsletter lists
+Route::get('/getApproveNewsletterLists',[NewsletterController::class, 'getApproveNewsletterLists'])->middleware('jwt.auth');
+
+//Pending Newsletter lists
+Route::get('/getPendingNewsletterLists',[NewsletterController::class, 'getPendingNewsletterLists'])->middleware('jwt.auth');

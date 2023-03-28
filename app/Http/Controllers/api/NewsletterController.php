@@ -26,7 +26,7 @@ class NewsletterController extends Controller
     }
 
     public function getNewsletterLists(){
-        $sql = "SELECT ns.news_id, ns.user_id, ns.publication_date, ns.title, ns.description, ns.url, ns.webhose_id, ns.textindex_td, ns.created_at, c.name as user_name FROM testing.newss as ns LEFT JOIN users as c ON ns.user_id=c.user_id WHERE ns.deleted=0";
+        $sql = "select news_id,user_id,publication_date,title,description,url,deleted from testing.newss n where deleted=0 and not exists (select 1 from testing.newsletter_news where news_id=n.news_id)";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'newsletterRecords' => $result
@@ -38,30 +38,127 @@ class NewsletterController extends Controller
         $sql = "INSERT INTO testing.newss (user_id, publication_date, title, description, url) values (".auth()->user()->user_id.", '".$request->publication_date."', '".pg_escape_string($request->title)."','".pg_escape_string($request->description)."', '".pg_escape_string($request->url)."')";
         // echo $sql;
         $result = DB::select(DB::raw($sql));
-        return response()->json([
-            'newssRecords' => $result
-        ]);
+        $lastId = DB::getPdo()->lastInsertId(); // get the last inserted id
+
+        // insert into news comments
+        $sqlc = "INSERT INTO testing.news_comments (news_id, user_id, title, description) values ($lastId, ".auth()->user()->user_id.", '".pg_escape_string($request->comments)."','".pg_escape_string($request->comments)."')";
+        $resultc = DB::insert(DB::raw($sqlc));
+        return response()->json(array('success' => true));
     }
 
-    //Add Newsletter Lists section
-    public function updateNewsletter(Request $request, $id){
-        $sql = "UPDATE newss SET user_id = ".auth()->user()->user_id.", publication_date = '".$request->publication_date."', title = '".pg_escape_string($request->title)."', description ='".pg_escape_string($request->description)."', url='".pg_escape_string($request->url)."' WHERE news_id=".$id;
-        //echo $sql;
-        $result = DB::select(DB::raw($sql));
-        return response()->json([
-            'newssRecords' => $result
-        ]);
-    }
+    //Update Newsletter Lists section
+    // public function updateNewsletter(Request $request, $id){
+    //     // $sql = "UPDATE testing.newss SET user_id = ".auth()->user()->user_id.", publication_date = '".$request->publication_date."', title = '".pg_escape_string($request->title)."', description ='".pg_escape_string($request->description)."', url='".pg_escape_string($request->url)."' WHERE news_id=".$id;
+    //     $sql = "UPDATE testing.newss SET user_id = ".auth()->user()->user_id.", title = '".pg_escape_string($request->title)."', description ='".pg_escape_string($request->description)."', url='".pg_escape_string($request->url)."' WHERE news_id=".$id;
+    //     //echo $sql;
+    //     $result = DB::select(DB::raw($sql));
+    //     return response()->json([
+    //         'newssRecords' => $result
+    //     ]);
+    // }
 
-    //Delete Newsletter Lists section
-    public function deleteNewsletter($id){
+    //Trash Newsletter Lists section
+    public function trashNewsletter($id){
         $sql = "UPDATE testing.newss SET deleted=1 WHERE news_id=".$id;
         $result = DB::select(DB::raw($sql));
+
+        $sqlc = "UPDATE testing.news_comments SET deleted=1 WHERE news_id=".$id;
+        $resultc = DB::select(DB::raw($sqlc));
+        return response()->json([
+            'newssDeleted' => $resultc
+        ]);
+    }
+
+    //Permanent Delete Newsletter Lists section
+    public function deleteNewsletter($id){
+        $sqlc = "delete from testing.news_comments WHERE news_id=".$id;
+        $resultc = DB::select(DB::raw($sqlc));
+
+        $sql = "delete from testing.newss WHERE news_id=".$id;
+        $result = DB::select(DB::raw($sql));
+        
         return response()->json([
             'newssDeleted' => $result
         ]);
     }
 
+    /////////////////////////////// Approval ///////////////////////////////////
+    //Approved Newsletter Lists section
+    public function approveNewsletter(Request $request){
+        // print_r($request->input('news_ids'));
+        $approval_date = date('Y-m-d');
+
+        $data = array();
+        foreach ($request->input('news_ids') as $innerArray) {
+            // $data[] = ['news_id'=>$innerArray, 'user_id'=> auth()->user()->user_id, 'approval_date'=>$approval_date]; 
+            
+            $sql = "INSERT INTO testing.newsletter_news (news_id,user_id, approval_date) values ($innerArray, ".auth()->user()->user_id.", '".$approval_date."')";
+            $result = DB::insert(DB::raw($sql));
+
+            $sqlc = "INSERT INTO testing.news_comments (news_id, user_id, title, description) values ($innerArray, ".auth()->user()->user_id.", '".pg_escape_string($request->comments)."','".pg_escape_string($request->comments)."')";
+            $resultc = DB::insert(DB::raw($sqlc));            
+        }
+        return response()->json(array('success' => true));
+        // Model::insert($data);
+        // DB::table('testing.newsletter_news')->insert($data);
+    }
+
+    //Approved Newsletter Lists section
+    public function disapproveNewsletter(Request $request){
+        $data = array();
+        foreach ($request->input('news_ids') as $innerArray) {     
+            
+            $sql = "UPDATE testing.newss SET deleted=1 WHERE news_id=".$innerArray;
+            $result = DB::insert(DB::raw($sql));
+
+            $sqlc = "INSERT INTO testing.news_comments (news_id, user_id, title, description) values ($innerArray, ".auth()->user()->user_id.", '".pg_escape_string($request->comments)."','".pg_escape_string($request->comments)."')";
+            $resultc = DB::insert(DB::raw($sqlc));            
+        }
+        return response()->json(array('success' => true));
+    }
+
+    //Pending Newsletter Lists section
+    public function pendingNewsletter(Request $request, $id){        
+            $sql = "UPDATE testing.newss SET deleted=0 WHERE news_id=".$id;
+            $result = DB::insert(DB::raw($sql));
+            
+            $sqlc = "INSERT INTO testing.news_comments (news_id, user_id, title, description) values ($id, ".auth()->user()->user_id.", '".pg_escape_string($request->comments)."','".pg_escape_string($request->comments)."')";
+            $resultc = DB::insert(DB::raw($sqlc));            
+        return response()->json(array('success' => true));
+    }
+
+    //Show Comments Newsletter Lists section
+    public function getCommentsNewsletter(Request $request, $id){
+        $sql = "select n.news_id,n.title,nc.description,u.name from testing.news_comments nc 
+        LEFT JOIN testing.newss n ON nc.news_id =  n.news_id
+        LEFT JOIN public.users u ON nc.user_id=u.user_id 
+        where nc.news_id=".$id;
+        //echo $sql;
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'newsCommentsRecords' => $result
+        ]);
+    }
+
+    // Get Approve newsletter lists;
+    public function getApproveNewsletterLists(){
+        $sql = "select news_id,user_id,publication_date,title,description,url from testing.newss n where deleted=0 and exists (select 1 from testing.newsletter_news where news_id=n.news_id)";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'newsletterRecords' => $result
+        ]);
+    }
+
+    // Get Pending newsletter lists;
+    public function getPendingNewsletterLists(){
+        $sql = "select news_id,user_id,publication_date,title,description,url from testing.newss n where deleted=1";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'newsletterRecords' => $result
+        ]);
+    }
+
+    /////////////////Backend Completed ///////////////////
     //////////// Frontend ////////////////
 
     //////Get Newsletter Lists section
