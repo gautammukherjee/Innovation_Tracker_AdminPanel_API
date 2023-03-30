@@ -103,6 +103,8 @@ Route::put('/deleteDrugSyn/{id}',[DrugController::class, 'deleteDrugSyn']);
 
 //TA lists
 Route::get('/getTasLists',[TaController::class, 'getTasLists'])->middleware('jwt.auth');
+Route::post('/getTasListsNotExistRl/{id}',[TaController::class, 'getTasListsNotExistRl'])->middleware('jwt.auth');
+Route::post('/getTasListsExistRl/{id}',[TaController::class, 'getTasListsExistRl'])->middleware('jwt.auth');
 
 //For frontend
 Route::post('/getNewsletterFrontLists',[NewsletterController::class, 'getNewsletterFrontLists'])->middleware('jwt.auth');
@@ -117,3 +119,6 @@ Route::get('/getApproveNewsletterLists',[NewsletterController::class, 'getApprov
 
 //Pending Newsletter lists
 Route::get('/getPendingNewsletterLists',[NewsletterController::class, 'getPendingNewsletterLists'])->middleware('jwt.auth');
+
+//Save Newsletter Relation for all the master lists
+Route::post('/saveNewsTaRl/{id}',[NewsletterController::class, 'saveNewsTaRl']);

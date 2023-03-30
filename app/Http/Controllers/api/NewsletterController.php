@@ -118,7 +118,7 @@ class NewsletterController extends Controller
     }
 
     //Pending Newsletter Lists section
-    public function pendingNewsletter(Request $request, $id){        
+    public function pendingNewsletter(Request $request, $id){
             $sql = "UPDATE testing.newss SET deleted=0 WHERE news_id=".$id;
             $result = DB::insert(DB::raw($sql));
             
@@ -158,6 +158,25 @@ class NewsletterController extends Controller
         ]);
     }
 
+
+    //////////////////// Save all master lists News relations ////////////////////////
+
+    //Save News TA Relation
+    public function saveNewsTaRl(Request $request, $id){
+        // print_r($request->input('ta_ids'));
+        // print_r($request);
+
+        $data = array();
+        foreach ($request->input('ta_ids') as $innerArray) {
+            // $data[] = ['news_id'=>$innerArray, 'user_id'=> auth()->user()->user_id, 'approval_date'=>$approval_date];
+            $sql = "INSERT INTO testing.news_ta_rels (news_id,ta_id) values ($id, ".$innerArray.")";
+            $result = DB::insert(DB::raw($sql));
+        }
+        return response()->json(array('success' => true));
+        // Model::insert($data);
+        // DB::table('testing.newsletter_news')->insert($data);
+    }
+    
     /////////////////Backend Completed ///////////////////
     //////////// Frontend ////////////////
 
