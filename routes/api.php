@@ -154,4 +154,4 @@ Route::get('/getBackendMoasLists',[MoasController::class, 'getBackendMoasLists']
 Route::get('/getBackendDrugsLists',[DrugController::class, 'getBackendDrugsLists'])->middleware('jwt.auth');
 Route::get('/getBackendCompaniesLists',[CompanyController::class, 'getBackendCompaniesLists'])->middleware('jwt.auth');
 Route::get('/getBackendDiseasesLists',[DiseaseController::class, 'getBackendDiseasesLists'])->middleware('jwt.auth');
-Route::get('/getBackendTasLists',[TaController::class, 'getBackendTasLists'])->middleware('jwt.auth');
+Route::get('/getBackendTasLists',[TaController::class, 'getTasLists'])->middleware('jwt.auth');
