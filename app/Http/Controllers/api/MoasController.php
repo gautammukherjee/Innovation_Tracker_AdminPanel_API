@@ -34,6 +34,17 @@ class MoasController extends Controller
         ]);
     }
 
+
+    ////////////////////////Backend API //////////////////////////////////////
+
+    //Get MOA Lists section
+    public function getBackendMoasLists(){
+        $sql = "select m.moa_id,m.name as moa_name, created_at from testing.moas m where m.deleted=0";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'moasRecords' => $result
+        ]);
+    }
 	//Add MOAs Lists section
     public function addMoas(Request $request){
         $sql = "INSERT INTO testing.moas (name, description) values ('".pg_escape_string($request->name)."', '".pg_escape_string($request->description)."')";
@@ -60,6 +71,24 @@ class MoasController extends Controller
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'moasDeleted' => $result
+        ]);
+    }
+
+    //Get MOA Lists section not exist in new_gene_relation table
+    public function getMoaListsNotExistRl(Request $request, $id){
+        $sql = "select n.moa_id, n.name from testing.moas n where n.deleted=0 and not exists (select 1 from testing.news_moa_rels mr where mr.moa_id=n.moa_id and mr.news_id=".$id.")";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'moaRecords' => $result
+        ]);
+    }
+
+    //Get MOA Lists section exist in new_gene_relation table
+    public function getMoaListsExistRl(Request $request, $id){
+        $sql = "select n.moa_id, n.name from testing.moas n where n.deleted=0 and exists (select 1 from testing.news_moa_rels mr where mr.moa_id=n.moa_id and mr.news_id=".$id.")";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'moaExistRecords' => $result
         ]);
     }
 	

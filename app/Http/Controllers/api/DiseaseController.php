@@ -34,6 +34,17 @@ class DiseaseController extends Controller
         ]);
     }
 
+
+    ////////////////////////// Backend API /////////////////////////////////
+    //Get Genes Lists section
+    public function getBackendDiseasesLists(){        
+        $sql = "select d.disease_id,d.name as disease_name, d.created_at from testing.diseases d where d.deleted=0";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'diseasesRecords' => $result
+        ]);
+    }
+
     //Add Genes Lists section
     public function addDiseases(Request $request){
         $sql = "INSERT INTO testing.diseases (name, description) values ('".pg_escape_string($request->name)."', '".pg_escape_string($request->description)."')";
@@ -98,6 +109,24 @@ class DiseaseController extends Controller
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'diseaseDeleted' => $result
+        ]);
+    }
+
+    //Get Disease Lists section not exist in new_disease_relation table
+    public function getDiseaseListsNotExistRl(Request $request, $id){
+        $sql = "select n.disease_id, n.name from testing.diseases n where n.deleted=0 and not exists (select 1 from testing.news_disease_rels dr where dr.disease_id=n.disease_id and dr.news_id=".$id.")";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'diseaseRecords' => $result
+        ]);
+    }
+
+    //Get Disease Lists section exist in new_disease_relation table
+    public function getDiseaseListsExistRl(Request $request, $id){
+        $sql = "select n.disease_id, n.name from testing.diseases n where n.deleted=0 and exists (select 1 from testing.news_disease_rels dr where dr.disease_id=n.disease_id and dr.news_id=".$id.")";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'diseaseExistRecords' => $result
         ]);
     }
 

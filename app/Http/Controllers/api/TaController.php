@@ -27,7 +27,7 @@ class TaController extends Controller
 
     //Get TA Lists section
     public function getTasLists(){
-        $sql = "SELECT ta_id, name, description, created_at FROM tas WHERE deleted=0";
+        $sql = "SELECT ta_id, name, description, created_at FROM testing.tas WHERE deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'tasRecords' => $result

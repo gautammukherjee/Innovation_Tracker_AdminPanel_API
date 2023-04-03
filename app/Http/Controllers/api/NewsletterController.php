@@ -176,8 +176,66 @@ class NewsletterController extends Controller
         // Model::insert($data);
         // DB::table('testing.newsletter_news')->insert($data);
     }
+
+    //Save News Disease Relation
+    public function saveNewsDiseaseRl(Request $request, $id){
+        // print_r($request->input('ta_ids'));
+        // print_r($request);
+
+        $data = array();
+        foreach ($request->input('di_ids') as $innerArray) {
+            // $data[] = ['news_id'=>$innerArray, 'user_id'=> auth()->user()->user_id, 'approval_date'=>$approval_date];
+            $sql = "INSERT INTO testing.news_disease_rels (news_id,disease_id) values ($id, ".$innerArray.")";
+            $result = DB::insert(DB::raw($sql));
+        }
+        return response()->json(array('success' => true));
+        // Model::insert($data);
+        // DB::table('testing.newsletter_news')->insert($data);
+    }
+
+    //Save News Drug Relation
+    public function saveNewsDrugRl(Request $request, $id){
+        $data = array();
+        foreach ($request->input('drug_ids') as $innerArray) {
+            $sql = "INSERT INTO testing.news_drug_rels (news_id,drug_id) values ($id, ".$innerArray.")";
+            $result = DB::insert(DB::raw($sql));
+        }
+        return response()->json(array('success' => true));
+    }
+
+    //Save News Company Relation
+    public function saveNewsCompanyRl(Request $request, $id){
+        $data = array();
+        foreach ($request->input('company_ids') as $innerArray) {
+            $sql = "INSERT INTO testing.news_company_rels (news_id,company_id) values ($id, ".$innerArray.")";
+            $result = DB::insert(DB::raw($sql));
+        }
+        return response()->json(array('success' => true));
+    }
+
+    //Save News Gene Relation
+    public function saveNewsGeneRl(Request $request, $id){
+        $data = array();
+        foreach ($request->input('gene_ids') as $innerArray) {
+            $sql = "INSERT INTO testing.news_gene_rels (news_id,gene_id) values ($id, ".$innerArray.")";
+            $result = DB::insert(DB::raw($sql));
+        }
+        return response()->json(array('success' => true));
+    }
+
+    //Save News MOA Relation
+    public function saveNewsMoaRl(Request $request, $id){
+        $data = array();
+        foreach ($request->input('moa_ids') as $innerArray) {
+            $sql = "INSERT INTO testing.news_moa_rels (news_id,moa_id) values ($id, ".$innerArray.")";
+            $result = DB::insert(DB::raw($sql));
+        }
+        return response()->json(array('success' => true));
+    }
     
     /////////////////Backend Completed ///////////////////
+
+
     //////////// Frontend ////////////////
 
     //////Get Newsletter Lists section

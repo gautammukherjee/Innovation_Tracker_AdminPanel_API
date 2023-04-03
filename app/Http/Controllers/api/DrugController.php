@@ -34,6 +34,17 @@ class DrugController extends Controller
         ]);
     }
 
+    //////////////////// Backend API ////////////////////////////////
+
+    //Get Genes Lists section
+    public function getBackendDrugsLists(){
+        $sql = "select d.drug_id,d.name as drug_name, description, d.created_at FROM testing.drugs d where d.deleted=0";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'drugsRecords' => $result
+        ]);
+    }
+
     //Add Drugs Lists section
     public function addDrugs(Request $request){
         $sql = "INSERT INTO testing.drugs (name, description) values ('".pg_escape_string($request->name)."', '".pg_escape_string($request->description)."')";
@@ -98,6 +109,24 @@ class DrugController extends Controller
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'drugDeleted' => $result
+        ]);
+    }
+
+    //Get Drug Lists section not exist in new_drug_relation table
+    public function getDrugListsNotExistRl(Request $request, $id){
+        $sql = "select n.drug_id, n.name from testing.drugs n where n.deleted=0 and not exists (select 1 from testing.news_drug_rels dr where dr.drug_id=n.drug_id and dr.news_id=".$id.")";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'drugRecords' => $result
+        ]);
+    }
+
+    //Get Drug Lists section exist in new_drug_relation table
+    public function getDrugListsExistRl(Request $request, $id){
+        $sql = "select n.drug_id, n.name from testing.drugs n where n.deleted=0 and exists (select 1 from testing.news_drug_rels dr where dr.drug_id=n.drug_id and dr.news_id=".$id.")";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'drugExistRecords' => $result
         ]);
     }
 }

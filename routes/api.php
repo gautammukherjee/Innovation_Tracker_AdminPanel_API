@@ -122,3 +122,36 @@ Route::get('/getPendingNewsletterLists',[NewsletterController::class, 'getPendin
 
 //Save Newsletter Relation for all the master lists
 Route::post('/saveNewsTaRl/{id}',[NewsletterController::class, 'saveNewsTaRl']);
+
+//Disease Lists saved relation with Newsletter
+Route::post('/getDiseaseListsNotExistRl/{id}',[DiseaseController::class, 'getDiseaseListsNotExistRl'])->middleware('jwt.auth');
+Route::post('/getDiseaseListsExistRl/{id}',[DiseaseController::class, 'getDiseaseListsExistRl'])->middleware('jwt.auth');
+Route::post('/saveNewsDiseaseRl/{id}',[NewsletterController::class, 'saveNewsDiseaseRl']);
+
+//Drug Lists saved relation with Newsletter
+Route::post('/getDrugListsNotExistRl/{id}',[DrugController::class, 'getDrugListsNotExistRl'])->middleware('jwt.auth');
+Route::post('/getDrugListsExistRl/{id}',[DrugController::class, 'getDrugListsExistRl'])->middleware('jwt.auth');
+Route::post('/saveNewsDrugRl/{id}',[NewsletterController::class, 'saveNewsDrugRl']);
+
+//Company Lists saved relation with Newsletter
+Route::post('/getCompanyListsNotExistRl/{id}',[CompanyController::class, 'getCompanyListsNotExistRl'])->middleware('jwt.auth');
+Route::post('/getCompanyListsExistRl/{id}',[CompanyController::class, 'getCompanyListsExistRl'])->middleware('jwt.auth');
+Route::post('/saveNewsCompanyRl/{id}',[NewsletterController::class, 'saveNewsCompanyRl']);
+
+//Gene Lists saved relation with Newsletter
+Route::post('/getGeneListsNotExistRl/{id}',[GeneController::class, 'getGeneListsNotExistRl'])->middleware('jwt.auth');
+Route::post('/getGeneListsExistRl/{id}',[GeneController::class, 'getGeneListsExistRl'])->middleware('jwt.auth');
+Route::post('/saveNewsGeneRl/{id}',[NewsletterController::class, 'saveNewsGeneRl']);
+
+//MOA Lists saved relation with Newsletter
+Route::post('/getMoaListsNotExistRl/{id}',[MoasController::class, 'getMoaListsNotExistRl'])->middleware('jwt.auth');
+Route::post('/getMoaListsExistRl/{id}',[MoasController::class, 'getMoaListsExistRl'])->middleware('jwt.auth');
+Route::post('/saveNewsMoaRl/{id}',[NewsletterController::class, 'saveNewsMoaRl']);
+
+//Backend master lists
+Route::get('/getBackendGenesLists',[GeneController::class, 'getBackendGenesLists'])->middleware('jwt.auth');
+Route::get('/getBackendMoasLists',[MoasController::class, 'getBackendMoasLists'])->middleware('jwt.auth');
+Route::get('/getBackendDrugsLists',[DrugController::class, 'getBackendDrugsLists'])->middleware('jwt.auth');
+Route::get('/getBackendCompaniesLists',[CompanyController::class, 'getBackendCompaniesLists'])->middleware('jwt.auth');
+Route::get('/getBackendDiseasesLists',[DiseaseController::class, 'getBackendDiseasesLists'])->middleware('jwt.auth');
+Route::get('/getBackendTasLists',[TaController::class, 'getBackendTasLists'])->middleware('jwt.auth');

@@ -34,6 +34,17 @@ class GeneController extends Controller
         ]);
     }
 
+    ////////////////////////////Backend//////////////////////////////
+
+    //Get backend Genes Lists section
+    public function getBackendGenesLists(){
+        $sql = "select distinct g.gene_id,g.name as gene_name, symbol, description, g.created_at from testing.genes g where g.deleted=0";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'genesRecords' => $result
+        ]);
+    }
+
     //Add Genes Lists section
     public function addGenes(Request $request){
         $sql = "INSERT INTO testing.genes (name, symbol, description) values ('".pg_escape_string($request->name)."', '".pg_escape_string($request->symbol)."', '".pg_escape_string($request->description)."')";
@@ -98,6 +109,24 @@ class GeneController extends Controller
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'geneDeleted' => $result
+        ]);
+    }
+
+    //Get Gene Lists section not exist in new_gene_relation table
+    public function getGeneListsNotExistRl(Request $request, $id){
+        $sql = "select n.gene_id, n.name from testing.genes n where n.deleted=0 and not exists (select 1 from testing.news_gene_rels gr where gr.gene_id=n.gene_id and gr.news_id=".$id.")";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'geneRecords' => $result
+        ]);
+    }
+
+    //Get Gene Lists section exist in new_gene_relation table
+    public function getGeneListsExistRl(Request $request, $id){
+        $sql = "select n.gene_id, n.name from testing.genes n where n.deleted=0 and exists (select 1 from testing.news_gene_rels gr where gr.gene_id=n.gene_id and gr.news_id=".$id.")";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'geneExistRecords' => $result
         ]);
     }
 }
