@@ -25,12 +25,21 @@ class DrugController extends Controller
         // $this->middleware('auth:api', ['except'=>['login', 'register']]);
     }
 
-    //Get Genes Lists section
+    //Get Drugs Lists section
     public function getDrugsLists(){
         $sql = "select distinct d.drug_id,d.name as drug_name, description, d.created_at FROM news_drug_rels ndr join drugs d on ndr.drug_id=d.drug_id where ndr.deleted=0 and d.deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'drugsRecords' => $result
+        ]);
+    }
+
+    //Get Drugs Synonms Lists section
+    public function getDrugsSynsLists(){
+        $sql = "SELECT d.drug_id, d.name as drug_name, ds.name as drug_syn_name FROM drugs d join news_drug_rels ndr on ndr.drug_id=d.drug_id join drug_syns ds on d.drug_id=ds.drug_id where ds.deleted=0 and d.deleted=0 ORDER BY d.drug_id ASC";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'drugsSynsRecords' => $result
         ]);
     }
 

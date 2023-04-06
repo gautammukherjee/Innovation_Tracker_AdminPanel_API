@@ -25,8 +25,8 @@ class DiseaseController extends Controller
         $this->middleware('auth:api', ['except'=>['login', 'register']]);
     }
 
-    //Get Genes Lists section
-    public function getDiseasesLists(){        
+    //Get Disease Lists section
+    public function getDiseasesLists(){
         $sql = "select distinct d.disease_id,d.name as disease_name from news_disease_rels ndr join diseases d on ndr.disease_id=d.disease_id where ndr.deleted=0 and d.deleted=0";
         $result = DB::select(DB::raw($sql));
         return response()->json([
@@ -34,9 +34,18 @@ class DiseaseController extends Controller
         ]);
     }
 
+    //Get Disease Synonym Lists section
+    public function getDiseasesSynsLists(){
+        $sql = "SELECT d.disease_id, d.name as disease_name, ds.disease_syn_id, ds.name as disease_syn_name FROM diseases d join news_disease_rels ndr on ndr.disease_id=d.disease_id join disease_syns ds on d.disease_id=ds.disease_id where ds.deleted=0 and d.deleted=0 ORDER BY d.disease_id ASC";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'diseasesSynsRecords' => $result
+        ]);
+    }
+
 
     ////////////////////////// Backend API /////////////////////////////////
-    //Get Genes Lists section
+    //Get Disease Lists section
     public function getBackendDiseasesLists(){        
         $sql = "select d.disease_id,d.name as disease_name, d.created_at from testing.diseases d where d.deleted=0";
         $result = DB::select(DB::raw($sql));

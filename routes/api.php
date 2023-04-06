@@ -44,6 +44,7 @@ Route::get('/getUsersLists',[UserController::class, 'getUsersLists'])->middlewar
 
 //Genes lists, add, update and delete
 Route::get('/getGenesLists',[GeneController::class, 'getGenesLists'])->middleware('jwt.auth');
+Route::get('/getGenesSynsLists',[GeneController::class, 'getGenesSynsLists'])->middleware('jwt.auth');
 Route::post('/addGenes',[GeneController::class, 'addGenes']);
 Route::put('/updateGenes/{id}',[GeneController::class, 'updateGenes']);
 Route::put('/deleteGenes/{id}',[GeneController::class, 'deleteGenes']);
@@ -63,6 +64,7 @@ Route::put('/deleteCompanies/{id}',[CompanyController::class, 'deleteCompanies']
 
 //Diseases lists, add, update and delete
 Route::get('/getDiseasesLists',[DiseaseController::class, 'getDiseasesLists'])->middleware('jwt.auth');
+Route::get('/getDiseasesSynsLists',[DiseaseController::class, 'getDiseasesSynsLists'])->middleware('jwt.auth');
 Route::post('/addDiseases',[DiseaseController::class, 'addDiseases']);
 Route::put('/updateDiseases/{id}',[DiseaseController::class, 'updateDiseases']);
 Route::put('/deleteDiseases/{id}',[DiseaseController::class, 'deleteDiseases']);
@@ -85,12 +87,14 @@ Route::post('/getCommentsNewsletter/{id}',[NewsletterController::class, 'getComm
 Route::post('/pendingNewsletter/{id}',[NewsletterController::class, 'pendingNewsletter']);
 
 Route::get('/getMoasLists',[MoasController::class, 'getMoasLists'])->middleware('jwt.auth');
+Route::get('/getMoasSynsLists',[MoasController::class, 'getMoasSynsLists'])->middleware('jwt.auth');
 Route::post('/addMoas',[MoasController::class, 'addMoas']);
 Route::put('/updateMoas/{id}',[MoasController::class, 'updateMoas']);
 Route::put('/deleteMoas/{id}',[MoasController::class, 'deleteMoas']);
 
 //Drugs lists, add, update and delete
 Route::get('/getDrugsLists',[DrugController::class, 'getDrugsLists'])->middleware('jwt.auth');
+Route::get('/getDrugsSynsLists',[DrugController::class, 'getDrugsSynsLists'])->middleware('jwt.auth');
 Route::post('/addDrugs',[DrugController::class, 'addDrugs']);
 Route::put('/updateDrugs/{id}',[DrugController::class, 'updateDrugs']);
 Route::put('/deleteDrugs/{id}',[DrugController::class, 'deleteDrugs']);

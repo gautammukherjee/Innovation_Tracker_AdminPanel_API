@@ -34,7 +34,16 @@ class GeneController extends Controller
         ]);
     }
 
-    ////////////////////////////Backend//////////////////////////////
+    //Get Genes Synonms Lists section
+    public function getGenesSynsLists(){
+        $sql = "SELECT g.gene_id, g.name as gene_name, gs.name as gene_syn_name FROM genes g join news_gene_rels ngr on ngr.gene_id=g.gene_id join gene_syns gs on g.gene_id=gs.gene_id where gs.deleted=0 and g.deleted=0 ORDER BY g.gene_id ASC";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'genesSynsRecords' => $result
+        ]);
+    }
+
+    //////////////////////////// Backend API //////////////////////////////
 
     //Get backend Genes Lists section
     public function getBackendGenesLists(){
