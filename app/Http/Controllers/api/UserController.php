@@ -21,8 +21,9 @@ class UserController extends Controller
     //     //
     // }
 
-    public function _construct(){
-        $this->middleware('auth:api', ['except'=>['login', 'register']]);
+    public function _construct()
+    {
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
     //login function
@@ -39,62 +40,69 @@ class UserController extends Controller
     // }
 
     //Register function
-    public function register(Request $request){
+    public function register(Request $request)
+    {
         $validator = Validator::make($request->all(), [
-            'name'=>'required',
-            'email'=> 'required|string|email|unique:users',
-            'password'=> 'required|string|min:6'
+            'name' => 'required',
+            'email' => 'required|string|email|unique:users',
+            'password' => 'required|string|min:6'
         ]);
-        if($validator->fails()){
+        if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
-        $user = User::create(array_merge(
-            $validator->validated(),
-            ['password'=>bcrypt($request->password)]
-        ));
+        $user = User::create(
+            array_merge(
+                $validator->validated(),
+                ['password' => bcrypt($request->password)]
+            )
+        );
         return response()->json([
-            'message'=>'User Successfully registered',
-            'user'=>$user
+            'message' => 'User Successfully registered',
+            'user' => $user
         ], 201);
     }
 
-    
+
 
     //Login section
-    public function login(Request $request){
+    public function login(Request $request)
+    {
         $validator = Validator::make($request->all(), [
-            'email'=> 'required|email',
-            'password'=> 'required|string'
+            'email' => 'required|email',
+            'password' => 'required|string'
         ]);
-        if($validator->fails()){
-            return response()->json(['error'=> $validator->errors()]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()]);
         }
-        
-        if(!$token=auth()->setTTL(1440)->attempt($validator->validated())){
-            return response()->json(['success'=>false,'error' => 'Unauthorized']);
+
+        if (!$token = auth()->setTTL(1440)->attempt($validator->validated())) {
+            return response()->json(['success' => false, 'error' => 'Unauthorized']);
         }
-        $login = $this->createNewToken($token);        
-        return response()->json(['success'=>true, 'search' => $login]);
+        $login = $this->createNewToken($token);
+        return response()->json(['success' => true, 'search' => $login]);
     }
 
-    public function createNewToken($token){
+    public function createNewToken($token)
+    {
         return response()->json([
-            'access_token'=>$token,
-            'token_type'=>'bearer',
-            'expireTimeUnit'=>'second',
-            'expires_in'=>auth()->factory()->getTTL()*60,
-            'user'=>auth()->user()
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expireTimeUnit' => 'second',
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => auth()->user()
         ]);
     }
 
     //Profile section
-    public function profile(){
-        return response()->json(['success'=>true, 'data'=>auth()->user()]);
+    public function profile()
+    {
+        return response()->json(['success' => true, 'data' => auth()->user()]);
     }
 
-    
+
     //Get Users Lists section
-    public function getUsersLists(){
+    public function getUsersLists()
+    {
         // try{
         //     $user = auth()->userOrFail();
         // }
@@ -109,11 +117,11 @@ class UserController extends Controller
     }
 
 
-    //Logout section
-    // public function logout(){
-    //     auth()->logout();
-    //     return response()->json([
-    //         'message'=>'User Logged out',
-    //     ]);
-    // }
+//Logout section
+// public function logout(){
+//     auth()->logout();
+//     return response()->json([
+//         'message'=>'User Logged out',
+//     ]);
+// }
 }
