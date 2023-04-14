@@ -161,6 +161,8 @@ Route::get('/getBackendDiseasesLists', [DiseaseController::class, 'getBackendDis
 Route::get('/getBackendTasLists', [TaController::class, 'getTasLists'])->middleware('jwt.auth');
 
 
+Route::post('/get_named_entities_news', [NewsletterController::class, 'get_named_entities_news']);
+
 //1. Save Unacurated Disease data in disease table
 Route::post('/saveUnacuratedDisease/{id}', [NewsletterController::class, 'saveUnacuratedDisease']);
 //2. Save Unacurated Drug data in drug table
