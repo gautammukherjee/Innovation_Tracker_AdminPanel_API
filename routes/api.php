@@ -40,6 +40,8 @@ Route::group(['middleware' => 'api'], function ($router) {
     // Route::post('/logout',[UserController::class, 'logout']);
 });
 
+Route::post('/managePassword', [UserController::class, 'managePassword'])->middleware('jwt.auth');
+
 Route::get('/getUsersLists', [UserController::class, 'getUsersLists'])->middleware('jwt.auth');
 
 //Genes lists, add, update and delete

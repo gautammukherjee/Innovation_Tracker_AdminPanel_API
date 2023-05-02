@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Auth;
 use Validator;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -114,6 +115,50 @@ class UserController extends Controller
         return response()->json([
             'usersRecords' => $result
         ]);
+    }
+
+
+    //Change password section
+    public function managePassword(Request $request)
+    {
+        // $old_password = bcrypt($request->old_password);
+        $new_password = bcrypt($request->new_password);
+
+        // $sql_update_query = "UPDATE users set password='" . $new_password . "'  WHERE user_id='" . $request->userId['user_id'] . "' AND password='" . $old_password . "'";
+        $sql_update_query = "UPDATE users set password='" . $new_password . "' WHERE user_id='" . $request->userId['user_id'] . "'";
+        // echo $sql_update_query;
+        $result = DB::update(DB::raw($sql_update_query));
+
+        // return back()->with("status", "Password changed successfully!");
+
+        if (is_null($result)) {
+            return response()->json(array('failure' => true));
+        } else {
+            return response()->json(array('success' => true));
+        }
+
+
+        # Validation
+        // $request->validate([
+        //     'old_password' => 'required',
+        //     'new_password' => 'required|confirmed',
+        // ]);
+
+        // #Match The Old Password
+        // if (!Hash::check($request->old_password, auth()->user()->password)) {
+        //     return back()->with("error", "Old Password Doesn't match!");
+        // }
+
+        // #Update the new Password
+        // User::whereUser_Id(auth()->user()->id)->update([
+        //     'password' => Hash::make($request->new_password)
+        // ]);
+
+        // return back()->with("status", "Password changed successfully!");
+        // return response()->json([
+        //     'usersRecords' => $result
+        // ]);
+
     }
 
 
