@@ -485,59 +485,7 @@ class NewsletterController extends Controller
     //1. Send data to call api from other resources
     public function get_named_entities_news(Request $request)
     {
-        $data_array = array("news_id" => $request->input('news_id'), "news_text" => pg_escape_string($request->input('news_text')));
-        // $data_array = array("news_id" => 1, "news_text" => pg_escape_string("Hexaell Announces NMPA (National Medical Products Administration, China) Clearance of Investigational New Drug (IND) Application for HepaCure Biocolumn, a Bioartificial Liver using Novel Cell Transdifferentiation Technology for the Treatment of Acute -HepaCure Biocolumn is the world first device-drug combination product based on cell transdifferentiation technology for treatment of acute-on-chronic liver failure. SHANGHAI, CHNA / ACCESSWIRE / December 5, 2022 / Hexaell Biotech Co., Ltd announced that the China National Medical Products Administration (NMPA, formerly CFDA) has cleared the IND, enabling the company to proceed a clinical trial for HepaCure, a novel device-drug combination product using hiHeps technology, a cell transdifferentiation technology which could directly convert human fibroblasts to hepatocyte like cells with liver cell functions. Hexaell plans to initiate a Phase 1/2 clinical trial in the second half of 2022 in patients who have acute-on-chronic liver failure syndromes. The clearance of the IND of HepaCure from NMPA is an inspiring milestone of Hexaell. We appreciate incentive and recognition to our innovation from our national regulatory authorities.  said Prof. Dr. Guoyu Pan, the Chair and Founder CTO at Hexaell. We look forward to getting our clinical program underway and testing our unique approach of curing acute-on-chronic liver failure with our unique hepatocyte like cells based on transdifferentiation technology. HepaCure Biocolumn, is a device-drug combination product using investigational allogeneic human hepatocyte like cells transdifferented from fibroblast. HepaCure Biocolumn has the potential to restore the body's liver function by dialysis process. Investigator initiated clinical trials have shown excellent extracorporeal liver function to cure acute-on-chronic liver failure patients. Acute-on-chronic liver failure (ACLF) is an increasingly numbers of entity with an acute deterioration of liver function with cirrhosis, which is usually associated with results in liver or multi-organs failure and high short term mortality. Management of ACLF is currently based on the supportive treatment of organ failures, mainly in an intensive care setting. For selected patients, liver transplantation is an effective way that help patients with a good long-term prognosis. However, the insufficiency of organs for transplantation has resulted in false treatment to ACFL patients, our bioartificial liver could fulfilled such unmet medical need. Hexaell is a leading biotechnology company that focus on bioscientific innovation to create transformative medicines for people with serious liver diseases. The company was founded in 2015 in Shanghai, Hexaell's headquarters and R&D center is now located in Zhangjiang area, additionally, the company has pilot manufacture sites in Jiading District. Hexaell is consistently recognized as one of the most innovative biotech companies in China. For learning more about Hexaell's history and innovation, visit http://www.hexaell.com/sy. https://www.accesswire.com/730056/Hexaell-Announces-NMPA-National-Medical-Products-Administration-China-Clearance-of-Investigational-New-Drug-IND-Application-for-HepaCure-Biocolumn-a-Bioartificial-Liver-using-Novel-Cell-Transdifferentiation-Technology-for-the-Treatment-of-Acute © Copyright 2023 Mammoth Times, 645 Old Mammoth Road, Suite A Mammoth Lakes, CA | Terms of Use | Privacy Policy"));
-        // print_r($data_array);
-
-        $method = "POST";
-        $url = "http://150.136.91.243:8889/get_named_entities_news/";
-        $data = json_encode($data_array);
-        // print_r($data);
-
-
-        $curl = curl_init();
-        switch ($method) {
-            case "POST":
-                curl_setopt($curl, CURLOPT_POST, 1);
-                if ($data)
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-                break;
-            case "PUT":
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-                if ($data)
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-                break;
-            default:
-                if ($data)
-                    $url = sprintf("%s?%s", $url, http_build_query($data));
-        }
-
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt(
-            $curl,
-            CURLOPT_HTTPHEADER,
-            array(
-                'APIKEY: e3eb581adb24fc310ffa4743b41afde3341ae9fc',
-                'Content-Type: application/json',
-            )
-        );
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-
-        // EXECUTE:
-        $result = curl_exec($curl);
-        if (!$result) {
-            die("Connection Failure");
-        }
-        curl_close($curl);
-        $make_call = $result;
-        // return $result;
-
-        $arrayResponse = json_decode($make_call, true);
-        // echo "<pre>";
-        // print_r($arrayResponse);
-        // echo "</pre>";
-
+	$arrayResponse = array("news_id" => $request->input('news_id'), "news_text" => pg_escape_string($request->input('news_text')));
         return response()->json([
             'newsLetterReturnRecords' => $arrayResponse
         ]);
