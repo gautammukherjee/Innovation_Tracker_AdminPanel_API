@@ -52,8 +52,8 @@ class NewsletterController extends Controller
     //Update Newsletter Lists section
     public function updateNewsletter(Request $request, $id)
     {
-        $sql = "UPDATE newss SET user_id = " . auth()->user()->user_id . ", publication_date = '" . $request->publication_date . "', title = '" . pg_escape_string($request->title) . "', description ='" . pg_escape_string($request->description) . "', url='" . pg_escape_string($request->url) . "' WHERE news_id=" . $id;
-        // $sql = "UPDATE newss SET user_id = " . auth()->user()->user_id . ", title = '" . pg_escape_string($request->title) . "', description ='" . pg_escape_string($request->description) . "', url='" . pg_escape_string($request->url) . "' WHERE news_id=" . $id;
+        // $sql = "UPDATE newss SET user_id = " . auth()->user()->user_id . ", publication_date = '" . $request->publication_date . "', title = '" . pg_escape_string($request->title) . "', description ='" . pg_escape_string($request->description) . "', url='" . pg_escape_string($request->url) . "' WHERE news_id=" . $id;
+        $sql = "UPDATE newss SET user_id = " . auth()->user()->user_id . ", title = '" . pg_escape_string($request->title) . "', description ='" . pg_escape_string($request->description) . "', url='" . pg_escape_string($request->url) . "' WHERE news_id=" . $id;
         // echo $sql;
         $result = DB::select(DB::raw($sql));
         return response()->json([
@@ -486,7 +486,7 @@ class NewsletterController extends Controller
     //1. Send data to call api from other resources
     public function get_named_entities_news(Request $request)
     {
-	$arrayResponse = array("news_id" => $request->input('news_id'), "news_text" => pg_escape_string($request->input('news_text')));
+        $arrayResponse = array("news_id" => $request->input('news_id'), "news_text" => pg_escape_string($request->input('news_text')));
         return response()->json([
             'newsLetterReturnRecords' => $arrayResponse
         ]);
