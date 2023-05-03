@@ -80,7 +80,7 @@ Route::put('/deleteDiseaseSyn/{id}', [DiseaseController::class, 'deleteDiseaseSy
 //Newsletter lists, add, update and delete
 Route::get('/getNewsletterLists', [NewsletterController::class, 'getNewsletterLists'])->middleware('jwt.auth');
 Route::post('/addNewsletter', [NewsletterController::class, 'addNewsletter']);
-// Route::put('/updateNewsletter/{id}',[NewsletterController::class, 'updateNewsletter']);
+Route::put('/updateNewsletter/{id}', [NewsletterController::class, 'updateNewsletter']);
 // Route::put('/trashNewsletter/{id}',[NewsletterController::class, 'trashNewsletter']);
 Route::delete('/deleteNewsletter/{id}', [NewsletterController::class, 'deleteNewsletter']);
 Route::post('/approveNewsletter', [NewsletterController::class, 'approveNewsletter']);
