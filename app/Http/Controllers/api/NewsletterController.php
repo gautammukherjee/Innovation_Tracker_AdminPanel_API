@@ -28,7 +28,7 @@ class NewsletterController extends Controller
 
     public function getNewsletterLists()
     {
-        $sql = "select news_id,user_id,publication_date,title,description,url,news_type_id,deleted from newss n where deleted=0 and not exists (select 1 from newsletter_news where news_id=n.news_id)";
+        $sql = "select n.news_id,n.user_id,n.publication_date,n.title,n.description,n.url,n.news_type_id,n.deleted, nt.name as nt_name from newss n LEFT JOIN news_types as nt ON n.news_type_id=nt.news_type_id where n.deleted=0 and not exists (select 1 from newsletter_news where news_id=n.news_id)";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'newsletterRecords' => $result
