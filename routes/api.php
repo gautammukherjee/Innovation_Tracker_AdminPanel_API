@@ -10,6 +10,8 @@ use App\Http\Controllers\api\DrugController;
 use App\Http\Controllers\api\MoasController;
 use App\Http\Controllers\api\NewsletterController;
 use App\Http\Controllers\api\TaController;
+use App\Http\Controllers\api\NewsTypeController;
+use App\Http\Controllers\api\DevelopmentPhaseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +62,7 @@ Route::put('/deleteGeneSyn/{id}', [GeneController::class, 'deleteGeneSyn']);
 //Companies lists, add, update and delete
 Route::get('/getCompaniesTypes', [CompanyController::class, 'getCompaniesTypes'])->middleware('jwt.auth');
 Route::get('/getCompaniesLists', [CompanyController::class, 'getCompaniesLists'])->middleware('jwt.auth');
+Route::get('/getDevelopmentPhaseLists', [DevelopmentPhaseController::class, 'getDevelopmentPhaseLists'])->middleware('jwt.auth');
 Route::post('/addCompanies', [CompanyController::class, 'addCompanies']);
 Route::put('/updateCompanies/{id}', [CompanyController::class, 'updateCompanies']);
 Route::put('/deleteCompanies/{id}', [CompanyController::class, 'deleteCompanies']);
@@ -78,6 +81,7 @@ Route::put('/updateDiseaseSyn/{id}', [DiseaseController::class, 'updateDiseaseSy
 Route::put('/deleteDiseaseSyn/{id}', [DiseaseController::class, 'deleteDiseaseSyn']);
 
 //Newsletter lists, add, update and delete
+Route::get('/getNewsTypes', [NewsletterController::class, 'getNewsTypes'])->middleware('jwt.auth');
 Route::get('/getNewsletterLists', [NewsletterController::class, 'getNewsletterLists'])->middleware('jwt.auth');
 Route::post('/addNewsletter', [NewsletterController::class, 'addNewsletter']);
 Route::put('/updateNewsletter/{id}', [NewsletterController::class, 'updateNewsletter']);
@@ -111,6 +115,9 @@ Route::put('/deleteDrugSyn/{id}', [DrugController::class, 'deleteDrugSyn']);
 Route::get('/getTasLists', [TaController::class, 'getTasLists'])->middleware('jwt.auth');
 Route::post('/getTasListsNotExistRl/{id}', [TaController::class, 'getTasListsNotExistRl'])->middleware('jwt.auth');
 Route::post('/getTasListsExistRl/{id}', [TaController::class, 'getTasListsExistRl'])->middleware('jwt.auth');
+
+// News Type Lists
+Route::get('/getNewsType', [NewsTypeController::class, 'getNewsType'])->middleware('jwt.auth');
 
 //For frontend
 Route::post('/getNewsletterFrontLists', [NewsletterController::class, 'getNewsletterFrontLists'])->middleware('jwt.auth');

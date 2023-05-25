@@ -28,7 +28,7 @@ class NewsletterController extends Controller
 
     public function getNewsletterLists()
     {
-        $sql = "select news_id,user_id,publication_date,title,description,url,deleted from newss n where deleted=0 and not exists (select 1 from newsletter_news where news_id=n.news_id)";
+        $sql = "select news_id,user_id,publication_date,title,description,url,news_type_id,deleted from newss n where deleted=0 and not exists (select 1 from newsletter_news where news_id=n.news_id)";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'newsletterRecords' => $result
@@ -38,7 +38,7 @@ class NewsletterController extends Controller
     //Add Newsletter Lists section
     public function addNewsletter(Request $request)
     {
-        $sql = "INSERT INTO newss (user_id, publication_date, title, description, url) values (" . auth()->user()->user_id . ", '" . $request->publication_date . "', '" . pg_escape_string($request->title) . "','" . pg_escape_string($request->description) . "', '" . pg_escape_string($request->url) . "')";
+        $sql = "INSERT INTO newss (user_id, publication_date, title, description, url, news_type_id) values (" . auth()->user()->user_id . ", '" . $request->publication_date . "', '" . pg_escape_string($request->title) . "','" . pg_escape_string($request->description) . "', '" . pg_escape_string($request->url) . "', " . $request->news_type_id . ")";
         // echo $sql;
         $result = DB::select(DB::raw($sql));
         $lastId = DB::getPdo()->lastInsertId(); // get the last inserted id
@@ -53,7 +53,7 @@ class NewsletterController extends Controller
     public function updateNewsletter(Request $request, $id)
     {
         // $sql = "UPDATE newss SET user_id = " . auth()->user()->user_id . ", publication_date = '" . $request->publication_date . "', title = '" . pg_escape_string($request->title) . "', description ='" . pg_escape_string($request->description) . "', url='" . pg_escape_string($request->url) . "' WHERE news_id=" . $id;
-        $sql = "UPDATE newss SET user_id = " . auth()->user()->user_id . ", title = '" . pg_escape_string($request->title) . "', description ='" . pg_escape_string($request->description) . "', url='" . pg_escape_string($request->url) . "' WHERE news_id=" . $id;
+        $sql = "UPDATE newss SET user_id = " . auth()->user()->user_id . ", title = '" . pg_escape_string($request->title) . "', description ='" . pg_escape_string($request->description) . "', url='" . pg_escape_string($request->url) . "', news_type_id=" . $request->news_type_id . " WHERE news_id=" . $id;
         // echo $sql;
         $result = DB::select(DB::raw($sql));
         return response()->json([
@@ -511,7 +511,7 @@ class NewsletterController extends Controller
         //     $sql = $sql . " AND publication_date ='". $request->from_date."'";
         // }
 
-        $sql = "with newsletter as (select nn.news_id,n.user_id,n.publication_date,n.title,n.description,n.url from newsletter_news nn join newss n on nn.news_id=n.news_id WHERE nn.deleted=0 and n.deleted=0 ";
+        $sql = "with newsletter as (select nn.news_id,n.user_id,n.publication_date,n.title,n.description,n.url, news_type_id from newsletter_news nn join newss n on nn.news_id=n.news_id WHERE nn.deleted=0 and n.deleted=0 ";
 
         //1. Publication Date range
         if ($request->from_date != $request->to_date) {
@@ -520,10 +520,15 @@ class NewsletterController extends Controller
             $sql = $sql . " AND publication_date ='" . $request->from_date . "'";
         }
 
-        $sql = $sql . " ) select nl.*,b.ta_ids,b.ta_names,c.disease_ids,c.disease_names,d.drug_ids,d.drug_names,e.company_ids,e.company_names,f.gene_ids,f.gene_names,g.marker_ids,g.marker_names,h.moa_ids,h.moa_names from newsletter nl ";
+        if ($request->news_type_id != "") {
+            $newsTypeImplode = implode(",", $request->news_type_id);
+            $sql = $sql . " and n.news_type_id in (" . $newsTypeImplode . ")";
+        }
+
+        $sql = $sql . " ) select nl.*,b.ta_ids,b.ta_names,c.disease_ids,c.disease_names,d.drug_ids,d.drug_names,e.company_ids,e.company_names,f.gene_ids,f.gene_names,g.marker_ids,g.marker_names,h.moa_ids,h.moa_names, i.dev_phase_ids,i.dev_phase_names from newsletter nl ";
         //$sql = $sql . " ) select nl.* from newsletter nl ";
 
-        //2. Therapeutic area paas
+        //2. Therapeutic area pass
         if ($request->ta_id != "") {
             $taJoin = " Join ";
         } else {
@@ -536,7 +541,7 @@ class NewsletterController extends Controller
         }
         $sql = $sql . " group by ntr.news_id ) as b on true"; //convert left join part to join when any parameter value passed / selected
 
-        //3. Disease indication paas
+        //3. Disease indication pass
         if ($request->di_ids != "") {
             $diseaseJoin = " Join ";
         } else {
@@ -550,7 +555,7 @@ class NewsletterController extends Controller
         }
         $sql = $sql . " group by ndr.news_id ) as c on true"; //convert left join part to join when any parameter value passed / selected
 
-        //4. Drug id paas
+        //4. Drug id pass
         if ($request->drug_id != "") {
             $drugJoin = " Join ";
         } else {
@@ -563,7 +568,7 @@ class NewsletterController extends Controller
         }
         $sql = $sql . " group by ndr.news_id) as d on true"; //convert left join part to join when any parameter value passed / selected
 
-        //5. Company id paas
+        //5. Company id pass
         if ($request->comp_id != "") {
             $companyJoin = " Join ";
         } else {
@@ -576,7 +581,7 @@ class NewsletterController extends Controller
         }
         $sql = $sql . " group by ncr.news_id) as e on true"; //convert left join part to join when any parameter value passed / selected
 
-        //6. Gene id paas
+        //6. Gene id pass
         if ($request->gene_id != "") {
             $geneJoin = " Join ";
         } else {
@@ -589,7 +594,7 @@ class NewsletterController extends Controller
         }
         $sql = $sql . " group by ngr.news_id) as f on true"; //convert left join part to join when any parameter value passed / selected
 
-        //7. Marker id paas
+        //7. Marker id pass
         if ($request->marker_id != "") {
             $markerJoin = " Join ";
         } else {
@@ -600,9 +605,10 @@ class NewsletterController extends Controller
             $markerImplode = implode(",", $request->marker_id);
             $sql = $sql . " and m.marker_id in (" . $markerImplode . ") "; //pass marker_id ids here also replace left join with join when its selected !
         }
+
         $sql = $sql . " group by nmr.news_id) as g on true"; //convert left join part to join when any parameter value passed / selected
 
-        //8. Moa id paas
+        //8. Moa id pass
         if ($request->moa_id != "") {
             $moaJoin = " Join ";
         } else {
@@ -614,6 +620,21 @@ class NewsletterController extends Controller
             $sql = $sql . " and m.moa_id in (" . $moaImplode . ") "; //pass moa_id ids here also replace left join with join when its selected !
         }
         $sql = $sql . " group by nmr.news_id) as h on true"; //convert left join part to join when any parameter value passed / selected
+
+        //9. Dev Phase id pass
+        if ($request->dev_phase_id != "") {
+            $devPhaseJoin = " Join ";
+        } else {
+            $devPhaseJoin = " Left Join";
+        }
+        $sql = $sql . $devPhaseJoin . " lateral (select  ndpr.news_id,array_agg(ndpr.dev_phase_id) as dev_phase_ids,array_agg(d.name) as dev_phase_names from news_dev_phase_rels ndpr join dev_phases d on ndpr.dev_phase_id=d.dev_phase_id where ndpr.news_id = nl.news_id and ndpr.deleted=0 and d.deleted=0";
+
+        if ($request->dev_phase_id != "") {
+            $devPhaseImplode = implode(",", $request->dev_phase_id);
+            $sql = $sql . " and d.dev_phase_id in (" . $devPhaseImplode . ") "; //-- pass dev_phase_id ids here also replace left join with join when its selected !
+        }
+        $sql = $sql . " group by ndpr.news_id) as i on true"; //convert left join part to join when any parameter value passed / selected
+
         // echo $sql;
 
         $result = DB::select(DB::raw($sql));
@@ -686,7 +707,7 @@ class NewsletterController extends Controller
         $sql = $sql . $markerJoin . " lateral (select  nmr.news_id,array_agg(nmr.marker_id) as marker_ids,array_agg(m.name) as marker_names,array_agg(row(nmr.marker_id,m.name)) as marker_details from news_marker_rels nmr join markers m on nmr.marker_id=m.marker_id where nmr.news_id = nl.news_id and nmr.deleted=0 and m.deleted=0 ";
         $sql = $sql . " group by nmr.news_id) as g on true"; //convert left join part to join when any parameter value passed / selected
 
-        //8. Moa id paas
+        //8. Moa id pass
         if ($request->moa_id != "") {
             $moaJoin = " Join ";
         } else {
@@ -694,6 +715,16 @@ class NewsletterController extends Controller
         }
         $sql = $sql . $moaJoin . " lateral (select  nmr.news_id,array_agg(nmr.moa_id) as moa_ids,array_agg(m.name) as moa_names from news_moa_rels nmr join moas m on nmr.moa_id=m.moa_id where nmr.news_id = nl.news_id and nmr.deleted=0 and m.deleted=0 ";
         $sql = $sql . " group by nmr.news_id) as h on true"; //convert left join part to join when any parameter value passed / selected
+
+        //9. Dev Phase id pass
+        if ($request->dev_phase_id != "") {
+            $devPhaseJoin = " Join ";
+        } else {
+            $devPhaseJoin = " Left Join";
+        }
+        $sql = $sql . $devPhaseJoin . " lateral (select  ndpr.news_id,array_agg(ndpr.dev_phase_id) as dev_phase_ids,array_agg(d.name) as dev_phase_names from news_dev_phase_rels ndpr join dev_phases d on ndpr.dev_phase_id=d.dev_phase_id where ndpr.news_id = nl.news_id and ndpr.deleted=0 and d.deleted=0";
+        $sql = $sql . " group by ndpr.news_id) as i on true"; //convert left join part to join when any parameter value passed / selected
+
         // echo $sql;
 
         $result = DB::select(DB::raw($sql));
@@ -723,6 +754,16 @@ class NewsletterController extends Controller
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'newsletterUserName' => $result
+        ]);
+    }
+
+    //Get Genes Lists section
+    public function getNewsTypes()
+    {
+        $sql = "select nt.news_type_id,nt.name from news_types nt where nt.deleted=0";
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'newsTypeRecords' => $result
         ]);
     }
 
