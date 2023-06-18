@@ -69,7 +69,7 @@ Route::put('/deleteCompanies/{id}', [CompanyController::class, 'deleteCompanies'
 
 //Diseases lists, add, update and delete
 Route::get('/getDiseasesLists', [DiseaseController::class, 'getDiseasesLists'])->middleware('jwt.auth');
-Route::get('/getDiseasesSynsLists', [DiseaseController::class, 'getDiseasesSynsLists'])->middleware('jwt.auth');
+Route::post('/getDiseasesSynsLists', [DiseaseController::class, 'getDiseasesSynsLists'])->middleware('jwt.auth');
 Route::post('/addDiseases', [DiseaseController::class, 'addDiseases']);
 Route::put('/updateDiseases/{id}', [DiseaseController::class, 'updateDiseases']);
 Route::put('/deleteDiseases/{id}', [DiseaseController::class, 'deleteDiseases']);

@@ -635,6 +635,13 @@ class NewsletterController extends Controller
         }
         $sql = $sql . " group by ndpr.news_id) as i on true"; //convert left join part to join when any parameter value passed / selected
 
+        if ($request->offSetValue != "") {
+            $sql = $sql . " offset " . $request->offSetValue;
+        }
+
+        if ($request->limitValue != "") {
+            $sql = $sql . "limit " . $request->limitValue;
+        }
         // echo $sql;
 
         $result = DB::select(DB::raw($sql));
