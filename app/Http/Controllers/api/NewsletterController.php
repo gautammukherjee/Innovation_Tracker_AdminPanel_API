@@ -153,7 +153,7 @@ class NewsletterController extends Controller
     // Get Approve newsletter lists;
     public function getApproveNewsletterLists()
     {
-        $sql = "select news_id,user_id,publication_date,title,description,url from newss n where deleted=0 and exists (select 1 from newsletter_news where news_id=n.news_id)";
+        $sql = "select news_id,user_id,publication_date,title,description,url from newss n where deleted=0 and exists (select 1 from newsletter_news where news_id=n.news_id) limit 5000";
         $result = DB::select(DB::raw($sql));
         return response()->json([
             'newsletterRecords' => $result
@@ -502,15 +502,6 @@ class NewsletterController extends Controller
     //////Get Newsletter Lists section
     public function getNewsletterFrontLists(Request $request)
     {
-        // $sql = "SELECT ns.news_id, ns.user_id, ns.publication_date, ns.title, ns.description, ns.url, ns.webhose_id, ns.textindex_td, ns.created_at, c.name as user_name FROM newss as ns LEFT JOIN users as c ON ns.user_id=c.user_id WHERE ns.deleted=0";
-        // //Publication Date range
-        // if($request->from_date!=$request->to_date){
-        //     $sql = $sql . " AND publication_date between '". $request->from_date ."' and '".$request->to_date."'";
-        // }
-        // else {
-        //     $sql = $sql . " AND publication_date ='". $request->from_date."'";
-        // }
-
         $sql = "with newsletter as (select nn.news_id,n.user_id,n.publication_date,n.title,n.description,n.url, news_type_id from newsletter_news nn join newss n on nn.news_id=n.news_id WHERE nn.deleted=0 and n.deleted=0 ";
 
         //1. Publication Date range
@@ -633,18 +624,11 @@ class NewsletterController extends Controller
             $devPhaseImplode = implode(",", $request->dev_phase_id);
             $sql = $sql . " and d.dev_phase_id in (" . $devPhaseImplode . ") "; //-- pass dev_phase_id ids here also replace left join with join when its selected !
         }
-        $sql = $sql . " group by ndpr.news_id) as i on true"; //convert left join part to join when any parameter value passed / selected
+        $sql = $sql . " group by ndpr.news_id) as i on true limit 5000"; //convert left join part to join when any parameter value passed / selected
 
-        if ($request->offSetValue != "") {
-            $sql = $sql . " offset " . $request->offSetValue;
-        }
-
-        if ($request->limitValue != "") {
-            $sql = $sql . "limit " . $request->limitValue;
-        }
         // echo $sql;
 
-        $result = DB::select(DB::raw($sql));
+        $result = DB::select($sql);
         return response()->json([
             'newsletterRecords' => $result
         ]);
@@ -732,7 +716,7 @@ class NewsletterController extends Controller
         $sql = $sql . $devPhaseJoin . " lateral (select  ndpr.news_id,array_agg(ndpr.dev_phase_id) as dev_phase_ids,array_agg(d.name) as dev_phase_names from news_dev_phase_rels ndpr join dev_phases d on ndpr.dev_phase_id=d.dev_phase_id where ndpr.news_id = nl.news_id and ndpr.deleted=0 and d.deleted=0";
         $sql = $sql . " group by ndpr.news_id) as i on true"; //convert left join part to join when any parameter value passed / selected
 
-        // echo $sql;
+        //echo $sql;
 
         $result = DB::select(DB::raw($sql));
         return response()->json([
