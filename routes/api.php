@@ -70,6 +70,9 @@ Route::put('/deleteCompanies/{id}', [CompanyController::class, 'deleteCompanies'
 //Diseases lists, add, update and delete
 Route::get('/getDiseasesLists', [DiseaseController::class, 'getDiseasesLists'])->middleware('jwt.auth');
 Route::post('/getDiseasesSynsLists', [DiseaseController::class, 'getDiseasesSynsLists'])->middleware('jwt.auth');
+Route::post('/getIndicationSynonymCount', [DiseaseController::class, 'getIndicationSynonymCount'])->middleware('jwt.auth');
+Route::post('/getIndicationSynonymSearch', [DiseaseController::class, 'getIndicationSynonymSearch'])->middleware('jwt.auth');
+Route::post('/getIndicationSynonymSearchCount', [DiseaseController::class, 'getIndicationSynonymSearchCount'])->middleware('jwt.auth');
 Route::post('/addDiseases', [DiseaseController::class, 'addDiseases']);
 Route::put('/updateDiseases/{id}', [DiseaseController::class, 'updateDiseases']);
 Route::put('/deleteDiseases/{id}', [DiseaseController::class, 'deleteDiseases']);
@@ -122,7 +125,7 @@ Route::get('/getNewsType', [NewsTypeController::class, 'getNewsType'])->middlewa
 //For frontend
 Route::post('/getNewsletterFrontLists', [NewsletterController::class, 'getNewsletterFrontLists'])->middleware('jwt.auth');
 Route::post('/getNewsletterFrontDetails', [NewsletterController::class, 'getNewsletterFrontDetails'])->middleware('jwt.auth');
-
+Route::post('/getAllNews', [NewsletterController::class, 'getAllNews'])->middleware('jwt.auth');
 
 // Route::post('/getNewsletterDisease',[NewsletterController::class, 'getNewsletterDisease'])->middleware('jwt.auth');
 Route::post('/getNewsletterUserName', [NewsletterController::class, 'getNewsletterUserName'])->middleware('jwt.auth');

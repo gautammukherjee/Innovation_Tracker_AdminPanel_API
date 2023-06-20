@@ -37,10 +37,80 @@ class DiseaseController extends Controller
     }
 
     //Get Disease Synonym Lists section
+    public function getIndicationSynonymCount(Request $request)
+    {
+        // $sql = "SELECT d.disease_id, d.name as disease_name, ds.disease_syn_id, ds.name as disease_syn_name FROM diseases d join news_disease_rels ndr on ndr.disease_id=d.disease_id join disease_syns ds on d.disease_id=ds.disease_id where ds.deleted=0 and d.deleted=0 ORDER BY d.disease_id ASC";
+        $sql = "SELECT count(distinct ds.disease_syn_id) FROM diseases d left join news_disease_rels ndr on ndr.disease_id=d.disease_id left join disease_syns ds on d.disease_id=ds.disease_id where ds.deleted=0 and d.deleted=0";
+
+        if ($request->offSetValue != "") {
+            $sql = $sql . " offset " . $request->offSetValue;
+        }
+
+        if ($request->limitValue != "") {
+            $sql = $sql . "limit " . $request->limitValue;
+        }
+        // echo $sql;
+
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'diseasesSynsCount' => $result
+        ]);
+    }
+
+    //Get Disease Synonym Lists section
     public function getDiseasesSynsLists(Request $request)
     {
         // $sql = "SELECT d.disease_id, d.name as disease_name, ds.disease_syn_id, ds.name as disease_syn_name FROM diseases d join news_disease_rels ndr on ndr.disease_id=d.disease_id join disease_syns ds on d.disease_id=ds.disease_id where ds.deleted=0 and d.deleted=0 ORDER BY d.disease_id ASC";
-        $sql = "SELECT distinct ds.disease_syn_id, ds.name as disease_syn_name, d.disease_id, d.name as disease_name FROM diseases d left join news_disease_rels ndr on ndr.disease_id=d.disease_id left join disease_syns ds on d.disease_id=ds.disease_id where ds.deleted=0 and d.deleted=0 ORDER BY d.disease_id ASC";
+        $sql = "SELECT distinct ds.disease_syn_id, ds.name as disease_syn_name, d.disease_id, d.name as disease_name FROM diseases d left join news_disease_rels ndr on ndr.disease_id=d.disease_id left join disease_syns ds on d.disease_id=ds.disease_id where ds.deleted=0 and d.deleted=0 ORDER BY disease_syn_name ASC";
+
+        if ($request->offSetValue != "") {
+            $sql = $sql . " offset " . $request->offSetValue;
+        }
+
+        if ($request->limitValue != "") {
+            $sql = $sql . "limit " . $request->limitValue;
+        }
+        // echo $sql;
+
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'diseasesSynsRecords' => $result
+        ]);
+    }
+
+    //Get Disease Synonym Lists section
+    public function getIndicationSynonymSearchCount(Request $request)
+    {
+        $sql = "select count(*) from disease_syns ds join diseases dd on ds.disease_id=dd.disease_id where ds.deleted=0 and dd.deleted=0 ";
+
+        if ($request->searchval != "") {
+            $sql = $sql . " and ds.name ilike '%" . $request->searchval . "%'";
+        }
+
+        if ($request->offSetValue != "") {
+            $sql = $sql . " offset " . $request->offSetValue;
+        }
+
+        if ($request->limitValue != "") {
+            $sql = $sql . "limit " . $request->limitValue;
+        }
+        // echo $sql;
+
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'diseasesSynsCount' => $result
+        ]);
+    }
+
+    //Get Disease Synonym Lists section
+    public function getIndicationSynonymSearch(Request $request)
+    {
+        $sql = "select ds.disease_syn_id,ds.name as disease_syn_name,dd.disease_id,dd.name as disease_name from disease_syns ds join diseases dd on ds.disease_id=dd.disease_id where ds.deleted=0 and dd.deleted=0 ";
+
+        if ($request->searchval != "") {
+            $sql = $sql . " and ds.name ilike '%" . $request->searchval . "%'";
+        }
+        $sql = $sql . " order by disease_syn_name";
 
         if ($request->offSetValue != "") {
             $sql = $sql . " offset " . $request->offSetValue;

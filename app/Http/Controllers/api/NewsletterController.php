@@ -499,6 +499,148 @@ class NewsletterController extends Controller
 
     /////////////////////////////////////////// Frontend ///////////////////////////////////
 
+    //////Get Total count News section
+    public function getAllNews(Request $request)
+    {
+        $sql = "with newsletter as (select nn.news_id,n.user_id,n.publication_date,n.title,n.description,n.url, news_type_id from newsletter_news nn join newss n on nn.news_id=n.news_id WHERE nn.deleted=0 and n.deleted=0 ";
+
+        //1. Publication Date range
+        if ($request->from_date != $request->to_date) {
+            $sql = $sql . " AND publication_date between '" . $request->from_date . "' and '" . $request->to_date . "'";
+        } else {
+            $sql = $sql . " AND publication_date ='" . $request->from_date . "'";
+        }
+
+        if ($request->news_type_id != "") {
+            $newsTypeImplode = implode(",", $request->news_type_id);
+            $sql = $sql . " and n.news_type_id in (" . $newsTypeImplode . ")";
+        }
+
+        $sql = $sql . " ) select count(*) from newsletter nl ";
+        //$sql = $sql . " ) select nl.* from newsletter nl ";
+
+        //2. Therapeutic area pass
+        if ($request->ta_id != "") {
+            $taJoin = " Join ";
+        } else {
+            $taJoin = " Left Join";
+        }
+        $sql = $sql . $taJoin . " lateral ( select  ntr.news_id,array_agg(ntr.ta_id) ta_ids,array_agg(t.name) as ta_names from news_ta_rels ntr join tas t on ntr.ta_id=t.ta_id where ntr.news_id = nl.news_id and ntr.deleted=0 and t.deleted=0 ";
+        if ($request->ta_id != "") {
+            $taImplode = implode(", ", $request->ta_id);
+            $sql = $sql . " and t.ta_id in (" . $taImplode . ")"; // pass ta_id ids here also replace left join with join when its selected !
+        }
+        $sql = $sql . " group by ntr.news_id ) as b on true"; //convert left join part to join when any parameter value passed / selected
+
+        //3. Disease indication pass
+        if ($request->di_ids != "") {
+            $diseaseJoin = " Join ";
+        } else {
+            $diseaseJoin = " Left Join";
+        }
+        $sql = $sql . $diseaseJoin . " lateral (select ndr.news_id,array_agg(ndr.disease_id) disease_ids,array_agg(d.name) as disease_names from news_disease_rels ndr join diseases d on ndr.disease_id=d.disease_id where ndr.news_id = nl.news_id and ndr.deleted=0 and d.deleted=0 ";
+
+        if ($request->di_ids != "") {
+            $diImplode = implode(",", $request->di_ids);
+            $sql = $sql . " and  d.disease_id in (" . $diImplode . ") "; //pass disease_id ids here also replace left join with join when its selected !"
+        }
+        $sql = $sql . " group by ndr.news_id ) as c on true"; //convert left join part to join when any parameter value passed / selected
+
+        //4. Drug id pass
+        if ($request->drug_id != "") {
+            $drugJoin = " Join ";
+        } else {
+            $drugJoin = " Left Join";
+        }
+        $sql = $sql . $drugJoin . " lateral (select  ndr.news_id,array_agg(ndr.drug_id) as drug_ids,array_agg(d.name) as drug_names from news_drug_rels ndr join drugs d on ndr.drug_id=d.drug_id where ndr.news_id = nl.news_id and ndr.deleted=0 and d.deleted=0 ";
+        if ($request->drug_id != "") {
+            $drugImplode = implode(",", $request->drug_id);
+            $sql = $sql . " and d.drug_id in (" . $drugImplode . ") "; //pass drug_id ids here also replace left join with join when its selected !
+        }
+        $sql = $sql . " group by ndr.news_id) as d on true"; //convert left join part to join when any parameter value passed / selected
+
+        //5. Company id pass
+        if ($request->comp_id != "") {
+            $companyJoin = " Join ";
+        } else {
+            $companyJoin = " Left Join";
+        }
+        $sql = $sql . $companyJoin . " lateral (select  ncr.news_id,array_agg(ncr.company_id) as company_ids,array_agg(c.name) as company_names from news_company_rels ncr join companys c on ncr.company_id=c.company_id where ncr.news_id = nl.news_id and ncr.deleted=0 and c.deleted=0 ";
+        if ($request->comp_id != "") {
+            $companyImplode = implode(",", $request->comp_id);
+            $sql = $sql . " and ncr.company_id in (" . $companyImplode . ") "; //pass company_id ids here also replace left join with join when its selected !
+        }
+        $sql = $sql . " group by ncr.news_id) as e on true"; //convert left join part to join when any parameter value passed / selected
+
+        //6. Gene id pass
+        if ($request->gene_id != "") {
+            $geneJoin = " Join ";
+        } else {
+            $geneJoin = " Left Join";
+        }
+        $sql = $sql . $geneJoin . " lateral (select  ngr.news_id,array_agg(ngr.gene_id) as gene_ids,array_agg(g.name) as gene_names from news_gene_rels ngr join genes g on ngr.gene_id=g.gene_id where ngr.news_id = nl.news_id and ngr.deleted=0 and g.deleted=0 ";
+        if ($request->gene_id != "") {
+            $geneImplode = implode(",", $request->gene_id);
+            $sql = $sql . " and  g.gene_id in (" . $geneImplode . ") "; //pass gene_id ids here also replace left join with join when its selected !
+        }
+        $sql = $sql . " group by ngr.news_id) as f on true"; //convert left join part to join when any parameter value passed / selected
+
+        //7. Marker id pass
+        if ($request->marker_id != "") {
+            $markerJoin = " Join ";
+        } else {
+            $markerJoin = " Left Join";
+        }
+        $sql = $sql . $markerJoin . " lateral (select  nmr.news_id,array_agg(nmr.marker_id) as marker_ids,array_agg(m.name) as marker_names,array_agg(row(nmr.marker_id,m.name)) as marker_details from news_marker_rels nmr join markers m on nmr.marker_id=m.marker_id where nmr.news_id = nl.news_id and nmr.deleted=0 and m.deleted=0 ";
+        if ($request->marker_id != "") {
+            $markerImplode = implode(",", $request->marker_id);
+            $sql = $sql . " and m.marker_id in (" . $markerImplode . ") "; //pass marker_id ids here also replace left join with join when its selected !
+        }
+
+        $sql = $sql . " group by nmr.news_id) as g on true"; //convert left join part to join when any parameter value passed / selected
+
+        //8. Moa id pass
+        if ($request->moa_id != "") {
+            $moaJoin = " Join ";
+        } else {
+            $moaJoin = " Left Join";
+        }
+        $sql = $sql . $moaJoin . " lateral (select  nmr.news_id,array_agg(nmr.moa_id) as moa_ids,array_agg(m.name) as moa_names from news_moa_rels nmr join moas m on nmr.moa_id=m.moa_id where nmr.news_id = nl.news_id and nmr.deleted=0 and m.deleted=0 ";
+        if ($request->moa_id != "") {
+            $moaImplode = implode(",", $request->moa_id);
+            $sql = $sql . " and m.moa_id in (" . $moaImplode . ") "; //pass moa_id ids here also replace left join with join when its selected !
+        }
+        $sql = $sql . " group by nmr.news_id) as h on true"; //convert left join part to join when any parameter value passed / selected
+
+        //9. Dev Phase id pass
+        if ($request->dev_phase_id != "") {
+            $devPhaseJoin = " Join ";
+        } else {
+            $devPhaseJoin = " Left Join";
+        }
+        $sql = $sql . $devPhaseJoin . " lateral (select  ndpr.news_id,array_agg(ndpr.dev_phase_id) as dev_phase_ids,array_agg(d.name) as dev_phase_names from news_dev_phase_rels ndpr join dev_phases d on ndpr.dev_phase_id=d.dev_phase_id where ndpr.news_id = nl.news_id and ndpr.deleted=0 and d.deleted=0";
+
+        if ($request->dev_phase_id != "") {
+            $devPhaseImplode = implode(",", $request->dev_phase_id);
+            $sql = $sql . " and d.dev_phase_id in (" . $devPhaseImplode . ") "; //-- pass dev_phase_id ids here also replace left join with join when its selected !
+        }
+        $sql = $sql . " group by ndpr.news_id) as i on true"; //convert left join part to join when any parameter value passed / selected
+
+        if ($request->offSetValue != "") {
+            $sql = $sql . " offset " . $request->offSetValue;
+        }
+
+        if ($request->limitValue != "") {
+            $sql = $sql . "limit " . $request->limitValue;
+        }
+        // echo $sql;
+
+        $result = DB::select(DB::raw($sql));
+        return response()->json([
+            'newsletterTotalCounts' => $result
+        ]);
+    }
+
     //////Get Newsletter Lists section
     public function getNewsletterFrontLists(Request $request)
     {
